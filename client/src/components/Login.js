@@ -1,26 +1,41 @@
 import { Button, TextField } from '@material-ui/core';
-import { useHistory } from "react-router-dom"
+import { useHistory, useLocation } from "react-router-dom"
+import { useState, useEffect } from "react"
 
-const Login = ({  }) => {
+const Login = ({ useAuth }) => {
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
+
     let history = useHistory()
+    let location = useLocation()
+    let auth = useAuth()
 
-    const onSubmit = () => {
+    let { from } = location.state || { from: { pathname: "/home" } };
+
+    let login = () => {
+        auth.signin(() => {
+            history.replace(from);
+        });
+    };
+
+    const onSubmit = (e) => {
+        e.preventDefault()
         
+        login()
     }
 
     return (
         <div>
-            <Button variant="contained" onClick={() => history.push("/")}>Back</Button>
-
-            <form>
-                <TextField id="outlined-multiline" label="Username" variant="outlined" required/>
-                <TextField id="outlined-multiline" label="Password" variant="outlined" required/>
-                <Button 
-                type="submit"
-                variant="contained" 
-                color="primary" 
-                onClick={() => console.log("login")}>Login</Button>
+            <form onSubmit={(e) => onSubmit(e)}>
+                <TextField id="outlined-multiline" label="Username" variant="outlined" required onChange={e => setUsername(e.target.value)}/>
+                <TextField id="outlined-multiline" label="Password" variant="outlined" required onChange={e => setPassword(e.target.value)}/>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary">Login</Button>
             </form>
+            <h3>Username: {username}</h3>
+            <h3>Password: {password}</h3>
         </div>
     )
 }

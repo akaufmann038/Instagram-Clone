@@ -2,48 +2,47 @@ import { useState } from "react"
 import { TextField, Button } from '@material-ui/core';
 import { useHistory } from "react-router-dom"
 
-const New = ({ userId, addPost }) => {
+const New = ({ userId, resetReload }) => {
     let history = useHistory()
 
     const [post, setPost] = useState({
         content: ""
     })
+    const [loading, setLoading] = useState("")
 
-    const addPostApi = async (user, newPost) => {
-        await fetch("http://localhost:5000/new-post", {
+    const onSubmit = async (e) => {
+        e.preventDefault()
+        setLoading("Loading...")
+
+        // add post to database
+        fetch("http://localhost:5000/new-post", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ userId: user, post: newPost })
+            body: JSON.stringify({ userId: userId, post: post })
         })
-    }
-
-    const onSubmit = async (e) => {
-        history.push("/")
-
-        //setPost({ content: "" })
-        //e.preventDefault()
-
-        //window.location = "localhost:3000/"
-        
-        // add post to database
-        await addPostApi(userId, post)
-        
-        //addPost(post)
-
-        //await refreshData()
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                throw response
+            })
+            .then((reponse) => console.log(reponse))
+            .then(() => history.push("/home"))
+            .finally(() => resetReload())
     }
 
     const onCancel = () => {
-        history.push("/")
+        history.push("/home")
     }
 
 
 
     return (
         <div>
-            <form >
+            <h4>{loading}</h4>
+            <form onSubmit={(e) => onSubmit(e)}>
                 <TextField
                     name="content"
                     id="outlined-multiline"
@@ -54,7 +53,7 @@ const New = ({ userId, addPost }) => {
                     required
                     onChange={e => setPost({ content: e.target.value })}
                     value={post.content} />
-                <Button type="submit" variant="contained" color="primary" onClick={() => onSubmit()}>Post</Button>
+                <Button type="submit" variant="contained" color="primary">Post</Button>
                 <Button variant="contained" color="secondary" onClick={() => onCancel()} >Cancel</Button>
             </form>
             <h2>Content: {post.content}</h2>

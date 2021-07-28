@@ -45,6 +45,8 @@ app.post("/new-post", async (req, res) => {
     req.user.tweets = [...req.user.tweets, newPost]
 
     await req.user.save()
+
+    res.json("Post successfully added!")
 })
 
 app.post("/new-user", async (req, res) => {
@@ -80,6 +82,8 @@ app.delete("/delete-post", async (req, res) => {
     })
 
     await req.user.save()
+
+    res.json("Successfully deleted post!")
 })
 
 // const savePost = async (req, res) => {
