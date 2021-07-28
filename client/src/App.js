@@ -9,6 +9,7 @@ import New from "./components/New"
 import Login from "./components/Login"
 import { useState, useEffect } from "react"
 import { Button } from '@material-ui/core';
+import { getUsersApi, deleteUserApi, deletePostApi, addUserApi } from "./components/Utils/Api"
 
 const exampleClientId = "60fac4ab91628f28e1bcb25d"
 
@@ -36,43 +37,10 @@ function App() {
   }
 
 
-  // gets data for logged in user
-  const getUsersApi = async () => {
-    await fetch("http://localhost:5000/posts", {
-      method: "GET"
-    })
-      .then(res => res.json())
-      .then(res => handleUsers(res))
-  }
-
-  const deleteUserApi = async (id) => {
-    await fetch("http://localhost:5000/delete-user", {
-      method: "DELETE",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userId: id })
-    })
-  }
-
-  const deletePostApi = async (userId, postId) => {
-    await fetch("http://localhost:5000/delete-post", {
-      method: "DELETE",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userId: userId, postId: postId })
-    })
-  }
-
-  const addUserApi = async () => {
-    await fetch("http://localhost:5000/new-user", {
-      method: "POST"
-    })
-  }
+  
 
   useEffect(() => {
-    getUsersApi()
+    getUsersApi(handleUsers)
   })
 
   const deleteUser = (userId) => {
