@@ -16,9 +16,9 @@ const ProvideAuth = ({ authContext, children }) => {
     function useProvideAuth() {
         const [user, setUser] = useState(null);
 
-        const signin = cb => {
+        const signin = (cb, user) => {
             return fakeAuth.signin(() => {
-                setUser("user");
+                setUser(user);
                 cb();
             });
         };

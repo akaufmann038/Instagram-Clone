@@ -8,11 +8,11 @@ const New = ({ userId, resetReload }) => {
     const [post, setPost] = useState({
         content: ""
     })
-    const [loading, setLoading] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const onSubmit = async (e) => {
         e.preventDefault()
-        setLoading("Loading...")
+        setLoading(true)
 
         // add post to database
         fetch("http://localhost:5000/new-post", {
@@ -41,7 +41,7 @@ const New = ({ userId, resetReload }) => {
 
     return (
         <div>
-            <h4>{loading}</h4>
+            {loading && <h4>Loading...</h4>}
             <form onSubmit={(e) => onSubmit(e)}>
                 <TextField
                     name="content"

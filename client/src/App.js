@@ -2,7 +2,10 @@ import './App.css';
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect,
+  useHistory,
+  useLocation
 } from "react-router-dom";
 import Posts from "./components/Posts"
 import New from "./components/New"
@@ -19,7 +22,6 @@ const exampleClientId = "60fac4ab91628f28e1bcb25d"
 function App() {
   const [posts, setPosts] = useState([])
   const [reload, setReload] = useState(false)
-  const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
 
   const resetReload = () => {
@@ -27,6 +29,7 @@ function App() {
   }
 
   const handleUsers = (data) => {
+    console.log(data)
 
     if (data.length > 0) {
       const currentUser = data.find((element) => {
@@ -40,7 +43,7 @@ function App() {
         setPosts([])
       }
 
-      setUsers(data)
+      //setUser(currentUser)
     }
   }
 
@@ -50,26 +53,31 @@ function App() {
   useEffect(() => {
     setLoading(true)
     fetch("http://localhost:5000/posts")
-    .then(response => {
-      if (response.ok) {
-        return response.json()
-      }
-      throw response
-    })
-    .then(data => {
-      handleUsers(data)
-    })
-    .then(() => setLoading(false))
-    .finally(() => console.log("done fetching data!"))
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        }
+        throw response
+      })
+      .then(data => {
+        handleUsers(data)
+      })
+      .then(() => setLoading(false))
+      .finally(() => console.log("done fetching data!"))
   }, [reload])
 
 
-  // create an example user that is myself
-  const createUser = () => {
-    console.log("creating user")
 
-    addUserApi()
+  const authContext = createContext()
+
+  function useAuth() {
+    return useContext(authContext);
   }
+
+  let auth = useAuth()
+
+  let history = useHistory()
+
 
   return (
     <div>
@@ -77,14 +85,17 @@ function App() {
         <Router>
           <Switch>
             <PrivateRoute path="/new-post" useAuth={useAuth}>
-              <New userId={exampleClientId} resetReload={resetReload}/>
+              <New userId={exampleClientId} resetReload={resetReload} />
             </PrivateRoute>
 
             <Route path="/login">
-              <Login useAuth={useAuth}/>
+              <Login useAuth={useAuth} />
             </Route>
             <PrivateRoute path="/home" useAuth={useAuth}>
-              <Home posts={posts} exampleClientId={exampleClientId} useAuth={useAuth} users={users} resetReload={resetReload} loading={loading}/>
+              <Home posts={posts} exampleClientId={exampleClientId} useAuth={useAuth} resetReload={resetReload} loading={loading} />
+            </PrivateRoute>
+            <PrivateRoute path="/" useAuth={useAuth}>
+              <Redirect to="/home" />
             </PrivateRoute>
           </Switch>
         </Router>
@@ -96,8 +107,3 @@ function App() {
 
 export default App;
 
-const authContext = createContext()
-
-function useAuth() {
-  return useContext(authContext);
-}

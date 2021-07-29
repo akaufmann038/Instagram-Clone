@@ -51,14 +51,16 @@ app.post("/new-post", async (req, res) => {
 
 app.post("/new-user", async (req, res) => {
     req.post = new User()
-    req.post.firstName = "Alexander"
-    req.post.lastName = "Kaufmann",
-        req.post.username = "akaufmann",
-        req.post.password = "withLove101",
+    req.post.firstName = "Isabel"
+    req.post.lastName = "Jones",
+        req.post.username = "izzyj",
+        req.post.password = "iloveAlex2",
         req.post.tweets = [],
         req.post.admin = false
 
     await req.post.save()
+
+    res.json("success!")
 })
 
 app.delete("/delete-user", async (req, res) => {
@@ -84,6 +86,21 @@ app.delete("/delete-post", async (req, res) => {
     await req.user.save()
 
     res.json("Successfully deleted post!")
+})
+
+app.post("/attempt-login", async (req, res) => {
+    let logUsername = req.body.username 
+    let logPassword = req.body.password
+
+    req.desiredUser = await User.find({ username: logUsername, password: logPassword })
+    
+    // user found
+    if (req.desiredUser.length === 1) {
+        res.json({ "message": "User found!", "user": req.desiredUser[0] })
+    }
+    else {
+        res.json({ "message": "User not found!" })
+    }
 })
 
 // const savePost = async (req, res) => {
