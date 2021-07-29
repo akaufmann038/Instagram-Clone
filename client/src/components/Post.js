@@ -1,14 +1,16 @@
 import { Card, CardHeader, CardActions, Button } from '@material-ui/core';
 
-const Post = ({ content, id, userId, resetReload }) => {
+const Post = ({ content, id, resetReload, useAuth }) => {
 
-    const deleteAction = (userId, postId) => {
+    let auth = useAuth()
+
+    const deleteAction = (postId) => {
         fetch("http://localhost:5000/delete-post", {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ userId: userId, postId: postId })
+            body: JSON.stringify({ userId: auth.user, postId: postId })
         })
             .then(response => {
                 if (response.ok) {
@@ -24,7 +26,7 @@ const Post = ({ content, id, userId, resetReload }) => {
         <Card>
             <CardHeader title={content} />
             <CardActions>
-                <Button color="secondary" variant="contained" onClick={() => deleteAction(userId, id)} >Delete</Button>
+                <Button color="secondary" variant="contained" onClick={() => deleteAction(id)} >Delete</Button>
             </CardActions>
             <h4>ID: {id}</h4>
         </Card>

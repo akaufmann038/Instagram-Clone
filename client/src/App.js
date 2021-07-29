@@ -47,6 +47,18 @@ function App() {
     }
   }
 
+  const handleUsers2 = (data) => {
+    console.log(data)
+
+    let tweets = []
+    // set posts to all posts in the database
+    data.forEach(user => {
+      tweets = tweets.concat(user.tweets)
+    })
+
+    console.log("tweets: " + tweets)
+  }
+
 
 
 
@@ -61,6 +73,7 @@ function App() {
       })
       .then(data => {
         handleUsers(data)
+        //handleUsers2(data)
       })
       .then(() => setLoading(false))
       .finally(() => console.log("done fetching data!"))
@@ -85,7 +98,7 @@ function App() {
         <Router>
           <Switch>
             <PrivateRoute path="/new-post" useAuth={useAuth}>
-              <New userId={exampleClientId} resetReload={resetReload} />
+              <New useAuth={useAuth} resetReload={resetReload} />
             </PrivateRoute>
 
             <Route path="/login">
@@ -94,6 +107,9 @@ function App() {
             <PrivateRoute path="/home" useAuth={useAuth}>
               <Home posts={posts} exampleClientId={exampleClientId} useAuth={useAuth} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
+            {/* <PrivateRoute path="my-posts" useAuth={useAuth}>
+              <Me posts={posts}/>
+            </PrivateRoute> */}
             <PrivateRoute path="/" useAuth={useAuth}>
               <Redirect to="/home" />
             </PrivateRoute>

@@ -2,8 +2,9 @@ import { useState } from "react"
 import { TextField, Button } from '@material-ui/core';
 import { useHistory } from "react-router-dom"
 
-const New = ({ userId, resetReload }) => {
+const New = ({ useAuth, resetReload }) => {
     let history = useHistory()
+    let auth = useAuth()
 
     const [post, setPost] = useState({
         content: ""
@@ -20,7 +21,7 @@ const New = ({ userId, resetReload }) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ userId: userId, post: post })
+            body: JSON.stringify({ userId: auth.user, post: post })
         })
             .then(response => {
                 if (response.ok) {

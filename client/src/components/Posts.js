@@ -3,7 +3,7 @@ import Post from "./Post"
 import { Button, Container } from '@material-ui/core';
 import { useHistory } from "react-router-dom"
 
-const Posts = ({ posts, userId, useAuth, resetReload }) => {
+const Posts = ({ posts, useAuth, resetReload }) => {
     let history = useHistory()
     let auth = useAuth()
 
@@ -15,7 +15,10 @@ const Posts = ({ posts, userId, useAuth, resetReload }) => {
         <div>
             <Container>
                 {posts.map((element, idx) => {
-                    return <Post key={idx} id={element._id} content={element.content} userId={userId} resetReload={resetReload} />
+                    return <Post key={idx} id={element._id} 
+                    content={element.content} 
+                    resetReload={resetReload}
+                    useAuth={useAuth} />
                 })}
             </Container>
             <Button color="primary" variant="contained" onClick={() => clickNewPost()}>New Post</Button>

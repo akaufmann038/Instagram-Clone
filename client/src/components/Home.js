@@ -26,7 +26,7 @@ const Home = ({ posts, exampleClientId, useAuth, resetReload, loading }) => {
     return (
         <div>
             {loading && <h4>Loading...</h4>}
-            <Posts posts={posts} userId={exampleClientId} useAuth={useAuth} resetReload={resetReload}/>
+            <Posts posts={posts} useAuth={useAuth} resetReload={resetReload}/>
             <Button variant="contained" color="secondary" onClick={() => createUser()} >Create User</Button>
             <div>
                 Users:
