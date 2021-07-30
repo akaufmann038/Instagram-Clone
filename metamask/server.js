@@ -32,7 +32,8 @@ app.post("/new-post", async (req, res) => {
     // TODO: generate a post id 
     const userId = req.body.userId
     const newPost = {
-        content: req.body.post.content
+        content: req.body.post.content,
+        createdAt: Date.now()
     }
 
     // const newPost = {
@@ -51,12 +52,12 @@ app.post("/new-post", async (req, res) => {
 
 app.post("/new-user", async (req, res) => {
     req.post = new User()
-    req.post.firstName = "Isabel"
-    req.post.lastName = "Jones",
-        req.post.username = "izzyj",
-        req.post.password = "iloveAlex2",
+    req.post.firstName = "Admin"
+    req.post.lastName = "Admin",
+        req.post.username = "admin",
+        req.post.password = "admin",
         req.post.tweets = [],
-        req.post.admin = false
+        req.post.admin = true
 
     await req.post.save()
 

@@ -23,6 +23,7 @@ const model = new mongoose.Schema(
             [
                 {
                     content: String,
+                    createdAt: Date,
                     id: mongoose.Types.ObjectId
                 }
             ],

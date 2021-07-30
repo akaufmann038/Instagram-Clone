@@ -15,8 +15,8 @@ const Posts = ({ posts, useAuth, resetReload }) => {
         <div>
             <Container>
                 {posts.map((element, idx) => {
-                    return <Post key={idx} id={element._id} 
-                    content={element.content} 
+                    return <Post key={idx} 
+                    postData={element}
                     resetReload={resetReload}
                     useAuth={useAuth} />
                 })}

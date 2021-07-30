@@ -11,16 +11,19 @@ import Posts from "./components/Posts"
 import New from "./components/New"
 import Login from "./components/Login"
 import Home from "./components/Home"
+import Admin from "./components/Admin"
 import { useState, useEffect, createContext, useContext } from "react"
 import { Button } from '@material-ui/core';
 import { getUsersApi, deleteUserApi, deletePostApi, addUserApi } from "./components/Utils/Api"
 import ProvideAuth from "./components/Auth/ProvideAuth"
 import PrivateRoute from "./components/Auth/PrivateRoute"
+import PrivateAdminRoute from "./components/Auth/PrivateAdminRoute"
 
-const exampleClientId = "60fac4ab91628f28e1bcb25d"
 
 function App() {
   const [posts, setPosts] = useState([])
+  const [userData, setUserData] = useState([])
+  //const [currentUser, setCurrentUser] = useState()
   const [reload, setReload] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -28,35 +31,30 @@ function App() {
     setReload(!reload)
   }
 
-  const handleUsers = (data) => {
-    console.log(data)
-
-    if (data.length > 0) {
-      const currentUser = data.find((element) => {
-        return element._id === exampleClientId
-      })
-
-      if (currentUser.tweets.length > 0) {
-        setPosts(currentUser.tweets)
-      }
-      else if (currentUser.tweets.length === 0) {
-        setPosts([])
-      }
-
-      //setUser(currentUser)
-    }
-  }
-
   const handleUsers2 = (data) => {
     console.log(data)
 
-    let tweets = []
-    // set posts to all posts in the database
-    data.forEach(user => {
-      tweets = tweets.concat(user.tweets)
-    })
 
-    console.log("tweets: " + tweets)
+    let tweets = []
+
+    data.forEach(user => {
+      let userId = user._id
+
+      tweets = tweets.concat(user.tweets.map(tweet => {
+        return {
+          content: tweet.content,
+          _id: tweet._id,
+          author: userId,
+          createdAt: new Date(tweet.createdAt)
+        }
+      }))
+    })
+    tweets.sort((a, b) => {
+      return b.createdAt - a.createdAt
+    })
+    
+    setPosts(tweets)
+    setUserData(data)
   }
 
 
@@ -72,8 +70,8 @@ function App() {
         throw response
       })
       .then(data => {
-        handleUsers(data)
-        //handleUsers2(data)
+        //handleUsers(data)
+        handleUsers2(data)
       })
       .then(() => setLoading(false))
       .finally(() => console.log("done fetching data!"))
@@ -86,10 +84,6 @@ function App() {
   function useAuth() {
     return useContext(authContext);
   }
-
-  let auth = useAuth()
-
-  let history = useHistory()
 
 
   return (
@@ -105,11 +99,11 @@ function App() {
               <Login useAuth={useAuth} />
             </Route>
             <PrivateRoute path="/home" useAuth={useAuth}>
-              <Home posts={posts} exampleClientId={exampleClientId} useAuth={useAuth} resetReload={resetReload} loading={loading} />
+              <Home posts={posts} useAuth={useAuth} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
-            {/* <PrivateRoute path="my-posts" useAuth={useAuth}>
-              <Me posts={posts}/>
-            </PrivateRoute> */}
+            <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
+              <Admin userData={userData} />
+            </PrivateAdminRoute>
             <PrivateRoute path="/" useAuth={useAuth}>
               <Redirect to="/home" />
             </PrivateRoute>
