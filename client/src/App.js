@@ -102,7 +102,7 @@ function App() {
               <Home posts={posts} useAuth={useAuth} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
             <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
-              <Admin userData={userData} />
+              <Admin userData={userData} resetReload={resetReload} />
             </PrivateAdminRoute>
             <PrivateRoute path="/" useAuth={useAuth}>
               <Redirect to="/home" />

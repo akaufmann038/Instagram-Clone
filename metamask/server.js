@@ -51,15 +51,15 @@ app.post("/new-post", async (req, res) => {
 })
 
 app.post("/new-user", async (req, res) => {
-    req.post = new User()
-    req.post.firstName = "Admin"
-    req.post.lastName = "Admin",
-        req.post.username = "admin",
-        req.post.password = "admin",
-        req.post.tweets = [],
-        req.post.admin = true
+    req.user = new User()
+    req.user.firstName = req.body.firstname
+    req.user.lastName = req.body.lastname,
+    req.user.username = req.body.username,
+    req.user.password = req.body.password,
+    req.user.tweets = [],
+    req.user.admin = false
 
-    await req.post.save()
+    await req.user.save()
 
     res.json("success!")
 })
@@ -76,7 +76,7 @@ app.delete("/delete-user", async (req, res) => {
 
 app.delete("/delete-post", async (req, res) => {
     let postId = req.body.postId
-    let userId = req.body.userId 
+    let userId = req.body.userId
 
     req.user = await User.findById(userId)
 
@@ -90,11 +90,11 @@ app.delete("/delete-post", async (req, res) => {
 })
 
 app.post("/attempt-login", async (req, res) => {
-    let logUsername = req.body.username 
+    let logUsername = req.body.username
     let logPassword = req.body.password
 
     req.desiredUser = await User.find({ username: logUsername, password: logPassword })
-    
+
     // user found
     if (req.desiredUser.length === 1) {
         res.json({ "message": "User found!", "user": req.desiredUser[0] })
