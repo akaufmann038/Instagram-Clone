@@ -26,6 +26,7 @@ function App() {
   const [userData, setUserData] = useState([])
   const [loading, setLoading] = useState(false)
 
+
   // gets tweets from given data
   const getTweets = (givenData) => {
     let tweets = []
@@ -56,8 +57,6 @@ function App() {
       setPosts(tweets)
       setLoading(false)
   }
-
-
 
   useEffect(() => {
     const fetchData = async () => {
