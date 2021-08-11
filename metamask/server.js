@@ -52,6 +52,10 @@ app.post("/new-post", async (req, res) => {
     res.json(posts)
 })
 
+app.put("/edit-post", async (req, res) => {
+    // LEFT OFF HERE
+})
+
 app.post("/new-user", async (req, res) => {
     req.user = new User()
     req.user.firstName = req.body.firstname
