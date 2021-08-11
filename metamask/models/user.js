@@ -27,10 +27,14 @@ const model = new mongoose.Schema(
                     id: mongoose.Types.ObjectId
                 }
             ],
-            admin: {
-                type: Boolean,
-                required: true
-            }
+        conversations: [{
+            userId: String, // userId of the opposite conversation user
+            createdAt: Date
+        }],
+        admin: {
+            type: Boolean,
+            required: true
+        }
     })
 
 

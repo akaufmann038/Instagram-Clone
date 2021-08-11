@@ -51,6 +51,9 @@ const Post = ({ resetReload, useAuth, postData }) => {
                 >Delete</Button>
                 <Button color="primary" variant="contained"
                 onClick={() => history.push("/home/" + postData._id)}>View</Button>
+                {auth.user !== postData.author ? 
+                <Button color="primary" variant="contained"
+                onClick={() => history.push("/conversations/" + postData.author)}>Send Message</Button> : <></>}
             </CardActions>
             <h4>ID: {postData._id}</h4>
             <h4>Create At: {String(postData.createdAt)}</h4>

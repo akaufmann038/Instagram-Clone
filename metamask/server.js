@@ -57,6 +57,7 @@ app.post("/new-user", async (req, res) => {
     req.user.username = req.body.username,
     req.user.password = req.body.password,
     req.user.tweets = [],
+    req.user.conversations = [],
     req.user.admin = false
 
     await req.user.save()
@@ -69,6 +70,8 @@ app.delete("/delete-user", async (req, res) => {
 
     try {
         await User.findByIdAndDelete(userId)
+
+        res.json("success!")
     } catch (e) {
         console.log(e)
     }

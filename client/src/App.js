@@ -18,6 +18,7 @@ import { getUsersApi, deleteUserApi, deletePostApi, addUserApi } from "./compone
 import ProvideAuth from "./components/Auth/ProvideAuth"
 import PrivateRoute from "./components/Auth/PrivateRoute"
 import PrivateAdminRoute from "./components/Auth/PrivateAdminRoute"
+import Conversations from "./components/Conversations"
 
 
 function App() {
@@ -52,7 +53,7 @@ function App() {
     tweets.sort((a, b) => {
       return b.createdAt - a.createdAt
     })
-    
+
     setPosts(tweets)
     setUserData(data)
   }
@@ -101,8 +102,11 @@ function App() {
             <PrivateRoute path="/home" useAuth={useAuth}>
               <Home posts={posts} useAuth={useAuth} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
+            <PrivateRoute path="/conversations/:userId" useAuth={useAuth}>
+              <Conversations />
+            </PrivateRoute>
             <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
-              <Admin userData={userData} resetReload={resetReload} />
+              <Admin userData={userData} handleUsers={handleUsers2} />
             </PrivateAdminRoute>
             <PrivateRoute path="/" useAuth={useAuth}>
               <Redirect to="/home" />

@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     }
 })
 
-const Admin = ({ userData, resetReload }) => {
+const Admin = ({ userData, handleUsers }) => {
     let history = useHistory()
     const styles = useStyles()
 
@@ -22,6 +22,28 @@ const Admin = ({ userData, resetReload }) => {
         username: "",
         password: ""
     })
+    const [reload, setReload] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    const resetReloadAdmin = () => {
+        setReload(!reload)
+    }
+
+    // useEffect(() => {
+    //     setLoading(true)
+    //     fetch("http://localhost:5000/posts")
+    //         .then(response => {
+    //             if (response.ok) {
+    //                 return response.json()
+    //             }
+    //             throw response
+    //         })
+    //         .then(data => {
+    //             handleUsers(data)
+    //         })
+    //         .then(() => setLoading(false))
+    //         .finally(() => console.log("done fetching data!"))
+    // }, [reload])
 
     const deleteUser = async (userId) => {
         await fetch("http://localhost:5000/delete-user", {
@@ -30,8 +52,9 @@ const Admin = ({ userData, resetReload }) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ userId: userId })
-        }).then(() => history.push("/home"))
-        .finally(() => resetReload())
+        })
+            .then(response => console.log(response))
+            .then(() => resetReloadAdmin())
     }
 
     const createUser = async (e) => {
@@ -51,8 +74,8 @@ const Admin = ({ userData, resetReload }) => {
                 throw response
             })
             .then(response => console.log(response))
-            .then(() => history.push("/home"))
-            .finally(() => resetReload())
+            .then(() => resetReloadAdmin())
+            //.then(() => history.push("/home"))
     }
 
     return (
@@ -84,42 +107,46 @@ const Admin = ({ userData, resetReload }) => {
                     id="outlined-multiline"
                     label="Firstname"
                     variant="outlined"
-                    required 
-                    onChange={e => setNewUser({ 
-                        firstname: e.target.value, 
-                        lastname: newUser.lastname, 
+                    required
+                    onChange={e => setNewUser({
+                        firstname: e.target.value,
+                        lastname: newUser.lastname,
                         username: newUser.username,
-                        password: newUser.password})} />
+                        password: newUser.password
+                    })} />
                 <TextField
                     id="outlined-multiline"
                     label="Lastname"
                     variant="outlined"
-                    required 
-                    onChange={e => setNewUser({ 
-                        firstname: newUser.firstname, 
-                        lastname: e.target.value, 
+                    required
+                    onChange={e => setNewUser({
+                        firstname: newUser.firstname,
+                        lastname: e.target.value,
                         username: newUser.username,
-                        password: newUser.password})}/>
+                        password: newUser.password
+                    })} />
                 <TextField
                     id="outlined-multiline"
                     label="Username"
                     variant="outlined"
-                    required 
-                    onChange={e => setNewUser({ 
-                        firstname: newUser.firstname, 
-                        lastname: newUser.lastname, 
+                    required
+                    onChange={e => setNewUser({
+                        firstname: newUser.firstname,
+                        lastname: newUser.lastname,
                         username: e.target.value,
-                        password: newUser.password})}/>
+                        password: newUser.password
+                    })} />
                 <TextField
                     id="outlined-multiline"
                     label="Password"
                     variant="outlined"
-                    required 
-                    onChange={e => setNewUser({ 
-                        firstname: newUser.firstname, 
-                        lastname: newUser.lastname, 
+                    required
+                    onChange={e => setNewUser({
+                        firstname: newUser.firstname,
+                        lastname: newUser.lastname,
                         username: newUser.username,
-                        password: e.target.value})}/>
+                        password: e.target.value
+                    })} />
                 <Button
                     type="submit"
                     variant="contained"
