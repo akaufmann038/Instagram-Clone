@@ -13,25 +13,25 @@ const New = ({ useAuth, resetReload }) => {
 
     const onSubmit = async (e) => {
         e.preventDefault()
+
+        
         setLoading(true)
 
-        // add post to database
-        fetch("http://localhost:5000/new-post", {
+        const result = await fetch("http://localhost:5000/new-post", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ userId: auth.user, post: post })
         })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                throw response
-            })
-            .then((reponse) => console.log(reponse))
-            .then(() => history.push("/home"))
-            .finally(() => resetReload())
+        .then(response => response.json())
+        .then(data => {
+            return data
+        })
+
+        
+        history.push("/home")
+        resetReload(result)
     }
 
     const onCancel = () => {

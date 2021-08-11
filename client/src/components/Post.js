@@ -19,22 +19,20 @@ const Post = ({ resetReload, useAuth, postData }) => {
     let history = useHistory()
     let { path, url } = useRouteMatch()
 
-    const deleteAction = () => {
-        fetch("http://localhost:5000/delete-post", {
+    const deleteAction = async () => {
+        const result = await fetch("http://localhost:5000/delete-post", {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ userId: auth.user, postId: postData._id })
         })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                throw response
+            .then(response => response.json())
+            .then(data => {
+                return data
             })
-            .then(response => console.log(response))
-            .finally(() => resetReload())
+
+        resetReload(result)
     }
 
 
@@ -46,14 +44,14 @@ const Post = ({ resetReload, useAuth, postData }) => {
             <CardHeader title={postData.content} />
             <h4>Author: {postData.author}</h4>
             <CardActions>
-                <Button color="secondary" variant="contained" 
-                onClick={() => deleteAction()}
+                <Button color="secondary" variant="contained"
+                    onClick={() => deleteAction()}
                 >Delete</Button>
                 <Button color="primary" variant="contained"
-                onClick={() => history.push("/home/" + postData._id)}>View</Button>
-                {auth.user !== postData.author ? 
-                <Button color="primary" variant="contained"
-                onClick={() => history.push("/conversations/" + postData.author)}>Send Message</Button> : <></>}
+                    onClick={() => history.push("/home/" + postData._id)}>View</Button>
+                {auth.user !== postData.author ?
+                    <Button color="primary" variant="contained"
+                        onClick={() => history.push("/conversations/" + postData.author)}>Send Message</Button> : <></>}
             </CardActions>
             <h4>ID: {postData._id}</h4>
             <h4>Create At: {String(postData.createdAt)}</h4>

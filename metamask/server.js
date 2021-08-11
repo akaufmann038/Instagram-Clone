@@ -47,7 +47,9 @@ app.post("/new-post", async (req, res) => {
 
     await req.user.save()
 
-    res.json("Post successfully added!")
+    const posts = await User.find().sort({ createdAt: "desc" })
+
+    res.json(posts)
 })
 
 app.post("/new-user", async (req, res) => {
@@ -62,7 +64,9 @@ app.post("/new-user", async (req, res) => {
 
     await req.user.save()
 
-    res.json("success!")
+    const posts = await User.find().sort({ createdAt: "desc" })
+
+    res.json(posts)
 })
 
 app.delete("/delete-user", async (req, res) => {
@@ -71,7 +75,9 @@ app.delete("/delete-user", async (req, res) => {
     try {
         await User.findByIdAndDelete(userId)
 
-        res.json("success!")
+        const posts = await User.find().sort({ createdAt: "desc" })
+
+        res.json(posts)
     } catch (e) {
         console.log(e)
     }
@@ -89,7 +95,9 @@ app.delete("/delete-post", async (req, res) => {
 
     await req.user.save()
 
-    res.json("Successfully deleted post!")
+    const posts = await User.find().sort({ createdAt: "desc" })
+
+    res.json(posts)
 })
 
 app.post("/attempt-login", async (req, res) => {

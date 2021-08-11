@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     }
 })
 
-const Admin = ({ userData, handleUsers }) => {
+const Admin = ({ userData, resetReload }) => {
     let history = useHistory()
     const styles = useStyles()
 
@@ -22,60 +22,41 @@ const Admin = ({ userData, handleUsers }) => {
         username: "",
         password: ""
     })
-    const [reload, setReload] = useState(false)
-    const [loading, setLoading] = useState(false)
-
-    const resetReloadAdmin = () => {
-        setReload(!reload)
-    }
-
-    // useEffect(() => {
-    //     setLoading(true)
-    //     fetch("http://localhost:5000/posts")
-    //         .then(response => {
-    //             if (response.ok) {
-    //                 return response.json()
-    //             }
-    //             throw response
-    //         })
-    //         .then(data => {
-    //             handleUsers(data)
-    //         })
-    //         .then(() => setLoading(false))
-    //         .finally(() => console.log("done fetching data!"))
-    // }, [reload])
 
     const deleteUser = async (userId) => {
-        await fetch("http://localhost:5000/delete-user", {
+        const result = await fetch("http://localhost:5000/delete-user", {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ userId: userId })
         })
-            .then(response => console.log(response))
-            .then(() => resetReloadAdmin())
+            .then(response => response.json())
+            .then(data => {
+                return data
+            })
+        
+        history.push("/home")
+        resetReload(result)
     }
 
     const createUser = async (e) => {
         e.preventDefault()
 
-        await fetch("http://localhost:5000/new-user", {
+        const result = await fetch("http://localhost:5000/new-user", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(newUser)
         })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                throw response
+            .then(response => response.json())
+            .then(data => {
+                return data
             })
-            .then(response => console.log(response))
-            .then(() => resetReloadAdmin())
-            //.then(() => history.push("/home"))
+
+        history.push("/home")
+        resetReload(result)
     }
 
     return (

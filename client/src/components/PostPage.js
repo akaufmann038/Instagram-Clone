@@ -10,23 +10,40 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
         return (post._id === postId)
     })
 
-    const deleteAction = () => {
-        fetch("http://localhost:5000/delete-post", {
+    // const deleteAction = () => {
+    //     fetch("http://localhost:5000/delete-post", {
+    //         method: "DELETE",
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({ userId: auth.user, postId: currentPost._id })
+    //     })
+    //         .then(response => {
+    //             if (response.ok) {
+    //                 return response.json()
+    //             }
+    //             throw response
+    //         })
+    //         .then(response => console.log(response))
+    //         .then(() => history.push("/home"))
+    //         .finally(() => resetReload())
+    // }
+
+    const deleteAction = async () => {
+        const result = await fetch("http://localhost:5000/delete-post", {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ userId: auth.user, postId: currentPost._id })
         })
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                }
-                throw response
+            .then(response => response.json())
+            .then(data => {
+                return data
             })
-            .then(response => console.log(response))
-            .then(() => history.push("/home"))
-            .finally(() => resetReload())
+
+        history.push("/home")
+        resetReload(result)
     }
 
     return (

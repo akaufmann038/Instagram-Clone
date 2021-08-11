@@ -24,21 +24,13 @@ import Conversations from "./components/Conversations"
 function App() {
   const [posts, setPosts] = useState([])
   const [userData, setUserData] = useState([])
-  //const [currentUser, setCurrentUser] = useState()
-  const [reload, setReload] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const resetReload = () => {
-    setReload(!reload)
-  }
-
-  const handleUsers2 = (data) => {
-    console.log(data)
-
-
+  // gets tweets from given data
+  const getTweets = (givenData) => {
     let tweets = []
 
-    data.forEach(user => {
+    givenData.forEach(user => {
       let userId = user._id
 
       tweets = tweets.concat(user.tweets.map(tweet => {
@@ -54,29 +46,40 @@ function App() {
       return b.createdAt - a.createdAt
     })
 
-    setPosts(tweets)
-    setUserData(data)
+    return tweets
+  }
+
+  const resetReload = (newData) => {
+      const tweets = getTweets(newData);
+
+      setUserData(newData)
+      setPosts(tweets)
+      setLoading(false)
   }
 
 
 
-
   useEffect(() => {
-    setLoading(true)
-    fetch("http://localhost:5000/posts")
-      .then(response => {
-        if (response.ok) {
-          return response.json()
-        }
-        throw response
-      })
-      .then(data => {
-        //handleUsers(data)
-        handleUsers2(data)
-      })
-      .then(() => setLoading(false))
-      .finally(() => console.log("done fetching data!"))
-  }, [reload])
+    const fetchData = async () => {
+      setLoading(true)
+
+      const result = await fetch("http://localhost:5000/posts")
+        .then(response => response.json())
+        .then(data => {
+          return data
+        })
+
+      console.log(result)
+      const tweets = getTweets(result);
+
+      setUserData(result)
+      setPosts(tweets)
+      setLoading(false)
+    }
+
+    fetchData()
+
+  }, [])
 
 
 
@@ -106,7 +109,7 @@ function App() {
               <Conversations />
             </PrivateRoute>
             <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
-              <Admin userData={userData} handleUsers={handleUsers2} />
+              <Admin userData={userData} resetReload={resetReload} />
             </PrivateAdminRoute>
             <PrivateRoute path="/" useAuth={useAuth}>
               <Redirect to="/home" />
