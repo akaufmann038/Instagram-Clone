@@ -9,7 +9,7 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
 
     const [loading, setLoading] = useState(false)
     const [editMode, setEditMode] = useState(false)
-    const [newContent, setNewContent] = useState(false)
+    const [newContent, setNewContent] = useState()
 
     const currentPost = posts.find(post => {
         return (post._id === postId)
@@ -28,8 +28,7 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
             body: JSON.stringify({
                 userId: auth.user, post: {
                     postId: postId,
-                    content: newContent,
-                    createdAt: currentPost.createdAt
+                    content: newContent
                 }
             })
         })
@@ -37,7 +36,7 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
             .then(data => {
                 return data
             })
-
+        console.log(result)
         setLoading(false)
         resetReload(result)
     }

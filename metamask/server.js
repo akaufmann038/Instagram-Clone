@@ -56,14 +56,13 @@ app.put("/edit-post", async (req, res) => {
     // LEFT OFF HERE
     req.user = await User.findById(req.body.userId)
 
-    const newPost = {
-        content: req.body.post.content,
-        createdAt: req.body.post.createdAt
-    }
-
     req.user.tweets = req.user.tweets.map(post => {
-        if (post._id === req.body.post.postId) {
-            return newPost 
+        if (String(post._id) === req.body.post.postId) {
+            return {
+                content: req.body.post.content,
+                createdAt: post.createdAt,
+                _id: post._id
+            }
         } else {
             return post
         }
