@@ -35,7 +35,7 @@ const Admin = ({ userData, resetReload }) => {
             .then(data => {
                 return data
             })
-        
+
         history.push("/home")
         resetReload(result)
     }
@@ -59,10 +59,25 @@ const Admin = ({ userData, resetReload }) => {
         resetReload(result)
     }
 
+    const deleteAdminConvo = async () => {
+        await fetch("http://localhost:5000/clear-admin-conversations", {
+            method: "DELETE"
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+    }
+
     return (
         <div>
             <Container>
-                <Button onClick={() => history.push("/home")} variant="contained" color="secondary">Back</Button>
+                <Button
+                    onClick={() => history.push("/home")}
+                    variant="contained"
+                    color="secondary">Back</Button>
+                <Button
+                    onClick={() => deleteAdminConvo()}
+                    variant="contained"
+                    color="secondary">Delete Admin Conversations</Button>
                 {userData.map((element, idx) => {
                     return <Card className={styles.card} key={idx}>
                         <CardContent>

@@ -104,8 +104,8 @@ function App() {
             <PrivateRoute path="/home" useAuth={useAuth}>
               <Home posts={posts} useAuth={useAuth} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
-            <PrivateRoute path="/conversations/:userId" useAuth={useAuth}>
-              <Conversations />
+            <PrivateRoute path="/conversations" useAuth={useAuth}>
+              <Conversations userData={userData} useAuth={useAuth} resetReload={resetReload} />
             </PrivateRoute>
             <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
               <Admin userData={userData} resetReload={resetReload} />

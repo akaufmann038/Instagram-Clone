@@ -29,6 +29,10 @@ const model = new mongoose.Schema(
             ],
         conversations: [{
             userId: String, // userId of the opposite conversation user
+            messages: [{
+                messageContent: String,
+                messageCreatedAt: Date
+            }],
             createdAt: Date
         }],
         admin: {

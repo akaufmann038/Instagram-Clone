@@ -75,6 +75,76 @@ app.put("/edit-post", async (req, res) => {
     res.json(posts)
 })
 
+app.delete("/clear-admin-conversations", async (req, res) => {
+    req.user = await User.findById("6104211506badf894ac9e1b2")
+
+    req.user.conversations = []
+
+    await req.user.save()
+
+    res.json("Deleted Admin's conversations!")
+})
+
+app.post("/new-conversation", async (req, res) => {
+    req.clientUser = await User.findById(req.body.clientUserId)
+
+    req.otherUser = await User.findById(req.body.otherUserId)
+
+    const firstMessage = req.body.firstMessage
+
+    const conversationCreatedAt = Date.now()
+
+    // create the conversation for clientUser
+    req.clientUser.conversations = [...req.clientUser.conversations, {
+        userId: req.body.otherUserId,
+        messages: [{ messageContent: firstMessage, messageCreatedAt: conversationCreatedAt }],
+        createdAt: conversationCreatedAt
+    }]
+
+    // create the conversation for otherUser
+    req.otherUser.conversations = [...req.otherUser.conversations, {
+        userId: req.body.clientUserId,
+        messages: [],
+        createdAt: conversationCreatedAt
+    }]
+
+    await req.clientUser.save()
+    await req.otherUser.save()
+
+    const posts = await User.find().sort({ createdAt: "desc" })
+
+    res.json(posts)
+})
+
+app.put("/send-message", async (req, res) => {
+    req.user = await User.findById(req.body.clientUserId)
+
+    let found = false
+    req.user.conversations = req.user.conversations.map(convo => {
+        // identify current conversation
+        if (convo.userId === req.body.otherUserId && !found) {
+            found = true
+            return {
+                createdAt: convo.createdAt,
+                messages: [...convo.messages, {
+                    messageContent: req.body.message,
+                    messageCreatedAt: Date.now()
+                }],
+                userId: convo.userId,
+                _id: convo._id
+            }
+        } else {
+            return convo
+        }
+    })
+
+    await req.user.save()
+
+    const posts = await User.find().sort({ createdAt: "desc" })
+
+    res.json(posts)
+})
+
 app.post("/new-user", async (req, res) => {
     req.user = new User()
     req.user.firstName = req.body.firstname
@@ -138,15 +208,5 @@ app.post("/attempt-login", async (req, res) => {
     }
 })
 
-// const savePost = async (req, res) => {
-//     let newPost = req.post
-
-//     // add fields to post
-//     newPost.content = req.body.content
-//     newPost.id = req.body.id
-
-//     // save in database
-//     await req.post.save()
-// }
 
 app.listen(5000)

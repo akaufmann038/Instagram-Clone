@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardActions, Button } from '@material-ui/core';
+import { Card, CardHeader, CardActions, Button, TextField } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles"
 import { Switch, useRouteMatch, Route, useParams, useHistory, Link } from "react-router-dom"
 
@@ -52,6 +52,7 @@ const Post = ({ resetReload, useAuth, postData }) => {
                 {auth.user !== postData.author ?
                     <Button color="primary" variant="contained"
                         onClick={() => history.push("/conversations/" + postData.author)}>Send Message</Button> : <></>}
+
             </CardActions>
             <h4>ID: {postData._id}</h4>
             <h4>Create At: {String(postData.createdAt)}</h4>

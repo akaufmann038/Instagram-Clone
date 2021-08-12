@@ -21,6 +21,7 @@ const Home = ({ posts, useAuth, resetReload, loading }) => {
                         useAuth={useAuth}
                         resetReload={resetReload} />
                     <Button variant="contained" color="primary" onClick={() => history.push("/admin")} >Admin Page</Button>
+                    <Button variant="contained" color="primary" onClick={() => history.push("/conversations")} >Conversations Page</Button>
                 </div>
             </Route>
             <Route path={`${path}/:postId`}>
