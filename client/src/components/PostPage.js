@@ -27,6 +27,7 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
             // insert new post here
             body: JSON.stringify({
                 userId: auth.user, post: {
+                    postId: postId,
                     content: newContent,
                     createdAt: currentPost.createdAt
                 }
@@ -70,6 +71,7 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
             // insert new post here
             body: JSON.stringify({
                 userId: auth.user, post: {
+                    postId: postId,
                     content: newContent,
                     createdAt: currentPost.createdAt
                 }

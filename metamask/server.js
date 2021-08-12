@@ -54,6 +54,26 @@ app.post("/new-post", async (req, res) => {
 
 app.put("/edit-post", async (req, res) => {
     // LEFT OFF HERE
+    req.user = await User.findById(req.body.userId)
+
+    const newPost = {
+        content: req.body.post.content,
+        createdAt: req.body.post.createdAt
+    }
+
+    req.user.tweets = req.user.tweets.map(post => {
+        if (post._id === req.body.post.postId) {
+            return newPost 
+        } else {
+            return post
+        }
+    })
+
+    await req.user.save()
+
+    const posts = await User.find().sort({ createdAt: "desc" })
+
+    res.json(posts)
 })
 
 app.post("/new-user", async (req, res) => {
