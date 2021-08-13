@@ -10,23 +10,58 @@ const Convo = ({ useAuth, userData, resetReload }) => {
     let history = useHistory()
     let { otherUserId } = useParams()
 
-    // get conversation for current user
-    const myConversation = userData.find(user => {
+    // get data for client user
+    const clientUser = userData.find(user => {
         return user._id === auth.user
-    }).conversations.find(conversation => {
-        return conversation.userId === otherUserId
     })
 
-    // get conversation of opposite user
-    const otherConversation = userData.find(user => {
+    // get data for other user
+    const otherUser = userData.find(user => {
         return user._id === otherUserId
-    }).conversations.find(conversation => {
-        return conversation.userId === auth.user
+    })
+
+    // returns true if conversation exists and false if not
+    const getConvoExist = () => {
+        let clientExists = false 
+        let otherExists = false
+
+        clientUser.conversations.forEach(convo => {
+            if (convo.userId === otherUserId) {
+                clientExists = true
+            }
+        })
+
+        otherUser.conversations.forEach(convo => {
+            if (convo.userId === auth.user) {
+                otherExists = true
+            }
+        })
+
+        return clientExists && otherExists
+    }
+
+    const convoExists = getConvoExist()
+
+
+    let clientMessages = []
+    let otherMessages = []
+    if (convoExists) {
+        clientMessages = clientUser.conversations.find(conversation => {
+            return conversation.userId === otherUserId
+        }).messages
+        otherMessages = otherUser.conversations.find(conversation => {
+            return conversation.userId === auth.user
+        }).messages
+    }
+
+    // LEFT OFF HERE...trying to make messages ordered
+    const allMessages = clientMessages.concat(otherMessages).sort(function(a, b) {
+        return b.messageCreatedAt - a.messageCreatedAt
     })
 
     useEffect(() => {
-        setNewConversation(myConversation === undefined && otherConversation === undefined)
-    }, [myConversation, otherConversation])
+        setNewConversation(!convoExists)
+    }, [convoExists])
 
     // starts a conversation with the first message from the client
     const startConversation = async (e) => {
@@ -76,13 +111,17 @@ const Convo = ({ useAuth, userData, resetReload }) => {
         resetReload(result)
     }
 
-    // LEFT OFF HERE
-    // next up is to display the actual conversation
 
     return (
         <div>
             <h4>Message: {newMessage}</h4>
             <h4>newConversation?: {String(newConversation)}</h4>
+            <section>
+                Messages:
+                {allMessages.map(message => {
+                    return <h4 key={message._id}>{message.messageContent}</h4>
+                })}
+            </section>
             <form onSubmit={newConversation ? (e) => startConversation(e): (e) => sendMessage(e)}>
                 <TextField
                     id="outlined-multiline"
