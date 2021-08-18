@@ -216,5 +216,8 @@ var server = app.listen(5000)
 const io = socket(server)
 
 io.on("connection", (socket) => {
-    console.log("Socket.io is connected!")
+
+    socket.on("new message", (data) => {
+        socket.broadcast.emit("new message")
+    })
 })

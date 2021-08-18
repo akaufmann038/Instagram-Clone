@@ -21,9 +21,6 @@ import PrivateAdminRoute from "./components/Auth/PrivateAdminRoute"
 import Conversations from "./components/Conversations"
 
 
-
-
-
 function App() {
   const [posts, setPosts] = useState([])
   const [userData, setUserData] = useState([])
@@ -53,6 +50,7 @@ function App() {
     return tweets
   }
 
+  // resets state data
   const resetReload = (newData) => {
       const tweets = getTweets(newData);
 

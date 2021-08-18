@@ -11,6 +11,20 @@ const Home = ({ posts, useAuth, resetReload, loading }) => {
 
     let { path, url } = useRouteMatch()
 
+    // refresh data in application
+    const refetchData = async () => {
+        //setLoading(true)
+
+        const result = await fetch("http://localhost:5000/posts")
+            .then(response => response.json())
+            .then(data => {
+                return data
+            })
+
+        console.log("data reloaded")
+        resetReload(result)
+    }
+
     return (
         <Switch>
             <Route exact path={path}>
@@ -22,11 +36,12 @@ const Home = ({ posts, useAuth, resetReload, loading }) => {
                         resetReload={resetReload} />
                     <Button variant="contained" color="primary" onClick={() => history.push("/admin")} >Admin Page</Button>
                     <Button variant="contained" color="primary" onClick={() => history.push("/conversations")} >Conversations Page</Button>
+                    <Button variat="contained" color="primary" onClick={() => refetchData()}>Refresh</Button>
                 </div>
             </Route>
-            <Route path={`${path}/:postId`}>
-                <PostPage posts={posts} useAuth={useAuth} resetReload={resetReload}/>
-            </Route>
+                <Route path={`${path}/:postId`}>
+                    <PostPage posts={posts} useAuth={useAuth} resetReload={resetReload} />
+                </Route>
         </Switch>
 
     )

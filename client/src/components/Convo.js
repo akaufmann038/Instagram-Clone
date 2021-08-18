@@ -1,22 +1,30 @@
 import { useParams, useHistory } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { TextField, Button } from '@material-ui/core'
-import { io } from "socket.io-client"
+import { socket } from '../service/socket'
 
 
 const Convo = ({ useAuth, userData, resetReload }) => {
-    const socket = io("http://localhost:5000", { transports: ['websocket'] })
-
-    socket.on("connect", () => {
-        console.log("client connected to socket.io!")
-    })
-
     const [newMessage, setNewMessage] = useState()
     const [newConversation, setNewConversation] = useState(true)
 
     let auth = useAuth()
     let history = useHistory()
     let { otherUserId } = useParams()
+
+    // refresh data in application
+    const refetchData = async () => {
+        //setLoading(true)
+
+        const result = await fetch("http://localhost:5000/posts")
+            .then(response => response.json())
+            .then(data => {
+                return data
+            })
+
+        console.log("data reloaded")
+        resetReload(result)
+    }
 
     // get data for client user
     const clientUser = userData.find(user => {
@@ -53,6 +61,7 @@ const Convo = ({ useAuth, userData, resetReload }) => {
 
     let clientMessages = []
     let otherMessages = []
+    // get client and other user messages
     if (convoExists) {
         clientMessages = clientUser.conversations.find(conversation => {
             return conversation.userId === otherUserId
@@ -76,6 +85,19 @@ const Convo = ({ useAuth, userData, resetReload }) => {
         setNewConversation(!convoExists)
     }, [convoExists])
 
+    useEffect(() => {
+        const eventHandler = () => {
+            console.log("refetch data")
+            refetchData()
+        }
+        socket.on("new message", eventHandler)
+
+
+        return () => {
+            socket.off("new message", eventHandler)
+        }
+    }, [])
+
     // starts a conversation with the first message from the client
     const startConversation = async (e) => {
         e.preventDefault()
@@ -96,6 +118,7 @@ const Convo = ({ useAuth, userData, resetReload }) => {
                 return data
             })
 
+        socket.emit("new message", "conversation created")
         resetReload(result)
         //console.log(result)
     }
@@ -121,9 +144,9 @@ const Convo = ({ useAuth, userData, resetReload }) => {
             })
 
         console.log(result)
+        socket.emit("new message", "message sent")
         resetReload(result)
     }
-
 
     return (
         <div>
