@@ -1,6 +1,8 @@
 const express = require("express")
+const socket = require("socket.io")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
+
 const app = express()
 const cors = require("cors")
 const User = require("./models/user")
@@ -209,4 +211,10 @@ app.post("/attempt-login", async (req, res) => {
 })
 
 
-app.listen(5000)
+var server = app.listen(5000)
+
+const io = socket(server)
+
+io.on("connection", (socket) => {
+    console.log("Socket.io is connected!")
+})

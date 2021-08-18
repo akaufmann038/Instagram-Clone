@@ -1,8 +1,16 @@
 import { useParams, useHistory } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { TextField, Button } from '@material-ui/core'
+import { io } from "socket.io-client"
+
 
 const Convo = ({ useAuth, userData, resetReload }) => {
+    const socket = io("http://localhost:5000", { transports: ['websocket'] })
+
+    socket.on("connect", () => {
+        console.log("client connected to socket.io!")
+    })
+
     const [newMessage, setNewMessage] = useState()
     const [newConversation, setNewConversation] = useState(true)
 
@@ -22,7 +30,7 @@ const Convo = ({ useAuth, userData, resetReload }) => {
 
     // returns true if conversation exists and false if not
     const getConvoExist = () => {
-        let clientExists = false 
+        let clientExists = false
         let otherExists = false
 
         clientUser.conversations.forEach(convo => {
@@ -54,10 +62,11 @@ const Convo = ({ useAuth, userData, resetReload }) => {
         }).messages
     }
 
-    const allMessages = clientMessages.concat(otherMessages).sort(function(a, b) {
+    // orders messages
+    const allMessages = clientMessages.concat(otherMessages).sort(function (a, b) {
         const bDate = new Date(b.messageCreatedAt)
         const aDate = new Date(a.messageCreatedAt)
-        
+
         const earlier = aDate - bDate
 
         return earlier
@@ -106,10 +115,10 @@ const Convo = ({ useAuth, userData, resetReload }) => {
                 message: newMessage
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            return data
-        })
+            .then(response => response.json())
+            .then(data => {
+                return data
+            })
 
         console.log(result)
         resetReload(result)
@@ -123,10 +132,10 @@ const Convo = ({ useAuth, userData, resetReload }) => {
             <section>
                 Messages:
                 {allMessages.map(message => {
-                    return <h4 key={message._id}>{message.messageContent}</h4>
-                })}
+                return <h4 key={message._id}>{message.messageContent}</h4>
+            })}
             </section>
-            <form onSubmit={newConversation ? (e) => startConversation(e): (e) => sendMessage(e)}>
+            <form onSubmit={newConversation ? (e) => startConversation(e) : (e) => sendMessage(e)}>
                 <TextField
                     id="outlined-multiline"
                     label="Message"
