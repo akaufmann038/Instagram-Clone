@@ -54,10 +54,13 @@ const Convo = ({ useAuth, userData, resetReload }) => {
         }).messages
     }
 
-    // LEFT OFF HERE...trying to make messages ordered
-    // test message
     const allMessages = clientMessages.concat(otherMessages).sort(function(a, b) {
-        return b.messageCreatedAt - a.messageCreatedAt
+        const bDate = new Date(b.messageCreatedAt)
+        const aDate = new Date(a.messageCreatedAt)
+        
+        const earlier = aDate - bDate
+
+        return earlier
     })
 
     useEffect(() => {
