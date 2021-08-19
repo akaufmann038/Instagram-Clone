@@ -3,10 +3,13 @@ import { useEffect, useState } from 'react'
 import { TextField, Button } from '@material-ui/core'
 import { socket } from '../service/socket'
 
-
+// LEFT OFF IN HERE
+// see what happens when there are two chats happening between four live users
+// is there web socket interferance between them?
 const Convo = ({ useAuth, userData, resetReload }) => {
     const [newMessage, setNewMessage] = useState()
     const [newConversation, setNewConversation] = useState(true)
+    const [otherConnected, setOtherConnected] = useState({ connected: false, socketId: "" })
 
     let auth = useAuth()
     let history = useHistory()
@@ -86,15 +89,34 @@ const Convo = ({ useAuth, userData, resetReload }) => {
     }, [convoExists])
 
     useEffect(() => {
-        const eventHandler = () => {
-            console.log("refetch data")
+        socket.auth = { connectedUser: auth.user }
+        socket.connect()
+
+        const newMessageHandler = (msg) => {
+            //console.log(msg)
             refetchData()
         }
-        socket.on("new message", eventHandler)
 
+        const usersHandler = (connectedUsers) => {
+            console.log(connectedUsers)
+
+            // if other user is connected, set otherConnected state to true
+            // otherwise, it stays false
+            connectedUsers.forEach(user => {
+                if (user.username === otherUserId) {
+                    // set state to connected with socket id of other user
+                    setOtherConnected({ connected: true, socketId: user.userId })
+                }
+            })
+        }
+        
+        socket.on("new message", newMessageHandler)
+
+        socket.on("users", usersHandler)
 
         return () => {
-            socket.off("new message", eventHandler)
+            socket.off("new message", newMessageHandler)
+            socket.off("users", usersHandler)
         }
     }, [])
 
@@ -118,7 +140,8 @@ const Convo = ({ useAuth, userData, resetReload }) => {
                 return data
             })
 
-        socket.emit("new message", "conversation created")
+        // no emitting necessary in start conversation because other user cannot be connected to socket
+        //socket.emit("new message", "conversation created")
         resetReload(result)
         //console.log(result)
     }
@@ -144,8 +167,16 @@ const Convo = ({ useAuth, userData, resetReload }) => {
             })
 
         console.log(result)
-        socket.emit("new message", "message sent")
+
+        if (otherConnected.connected) {
+            socket.emit("new message", { otherSocketId: otherConnected.socketId })
+        }
         resetReload(result)
+    }
+
+    const onBack = () => {
+        socket.disconnect()
+        history.push("/home")
     }
 
     return (
@@ -174,7 +205,9 @@ const Convo = ({ useAuth, userData, resetReload }) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                onClick={() => history.push("/home")}>Back</Button>
+                onClick={() => onBack()}>Back</Button>
+            <Button onClick={() => socket.emit("new message", otherConnected.socketId)}>Emit Message</Button>
+            <h4>OtherSocketId: {otherConnected.socketId}</h4>
         </div>
     )
 }

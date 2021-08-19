@@ -215,9 +215,45 @@ var server = app.listen(5000)
 
 const io = socket(server)
 
+io.use((socket, next) => {
+    //console.log("happening")
+    const username = socket.handshake.auth.connectedUser
+
+    socket.username = username
+
+    next()
+})
+
 io.on("connection", (socket) => {
+    console.log("server connected!")
+    console.log(socket.username)
+
+    let users = []
+    for (let [id, socket] of io.of("/").sockets) {
+        users.push({ 
+            userId: id,
+            username: socket.username
+        })
+    }
+
+    console.log(users)
+    // emit connected user data to clients
+    io.emit("users", users)
 
     socket.on("new message", (data) => {
-        socket.broadcast.emit("new message")
+        console.log("server received message!")
+        //socket.broadcast.emit("new message")
+        socket.to(data.otherSocketId).emit("new message")
+
+        // NOTE: left off here. socket.to.emit is not working
+    })
+
+    socket.on("disconnect", () => {
+        console.log("server disconnected!")
     })
 })
+
+// if other user is not connected, no emitting of messages
+    // on client connection, get all currently connected users
+    // NOTE: this requires a data refresh upon entering the message page
+// if other user is connected, emit message to that user
