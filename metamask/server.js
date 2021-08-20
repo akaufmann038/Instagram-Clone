@@ -247,11 +247,12 @@ io.on("connection", (socket) => {
     })
 
     socket.on("new message", (data) => {
+        // gets username of client that sent the message
+        const sentFrom = users.filter(user => {
+            return user.userId === socket.id
+        })[0].username
 
-        //for (let item of socket.rooms) console.log("room: " + item)
-
-        //console.log(data.otherSocketId)
-        socket.to(data.otherSocketId).emit("new message", users)
+        socket.to(data.otherSocketId).emit("new message", sentFrom)
     })
 
     socket.on("disconnect", () => {

@@ -94,9 +94,11 @@ const Convo = ({ useAuth, userData, resetReload, otherConnected, changeOtherConn
         socket.auth = { connectedUser: auth.user }
         socket.connect()
 
-        const newMessageHandler = async (data) => {
-            //console.log(msg)
-            refetchData()
+        const newMessageHandler = async (sentFrom) => {
+            if (sentFrom === otherUserId) {
+                refetchData()
+            }
+            
             //usersHandler(data)
         }
 
@@ -174,6 +176,9 @@ const Convo = ({ useAuth, userData, resetReload, otherConnected, changeOtherConn
         console.log(result)
 
         if (otherConnected.connected) {
+            // LEFT OFF HERE: think about what happens when other user isn't connected  
+            // and this client tries to send a message
+            // also make sure everything works for creating a new conversation
             socket.emit("new message", { otherSocketId: otherConnected.socketId })
         }
         resetReload(result)
