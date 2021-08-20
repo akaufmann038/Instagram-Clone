@@ -1,15 +1,16 @@
 import { useParams, useHistory } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { TextField, Button } from '@material-ui/core'
 import { socket } from '../service/socket'
 
 // LEFT OFF IN HERE
 // see what happens when there are two chats happening between four live users
 // is there web socket interferance between them?
-const Convo = ({ useAuth, userData, resetReload }) => {
+const Convo = ({ useAuth, userData, resetReload, otherConnected, changeOtherConnected }) => {
     const [newMessage, setNewMessage] = useState()
     const [newConversation, setNewConversation] = useState(true)
-    const [otherConnected, setOtherConnected] = useState({ connected: false, socketId: "" })
+    //const [otherConnected, setOtherConnected] = useState({ connected: false, socketId: "" })
+    //const otherConnected = useRef({ connected: false, socketId: "" })
 
     let auth = useAuth()
     let history = useHistory()
@@ -26,7 +27,8 @@ const Convo = ({ useAuth, userData, resetReload }) => {
             })
 
         console.log("data reloaded")
-        resetReload(result)
+        await resetReload(result)
+        //socket.emit("get users", { userId: socket.id })
     }
 
     // get data for client user
@@ -92,9 +94,10 @@ const Convo = ({ useAuth, userData, resetReload }) => {
         socket.auth = { connectedUser: auth.user }
         socket.connect()
 
-        const newMessageHandler = (msg) => {
+        const newMessageHandler = async (data) => {
             //console.log(msg)
             refetchData()
+            //usersHandler(data)
         }
 
         const usersHandler = (connectedUsers) => {
@@ -105,7 +108,9 @@ const Convo = ({ useAuth, userData, resetReload }) => {
             connectedUsers.forEach(user => {
                 if (user.username === otherUserId) {
                     // set state to connected with socket id of other user
-                    setOtherConnected({ connected: true, socketId: user.userId })
+                    //setOtherConnected({ connected: true, socketId: user.userId })
+                    //otherConnected.current = { connected: true, socketId: user.userId }
+                    changeOtherConnected({ connected: true, socketId: user.userId })
                 }
             })
         }
@@ -179,6 +184,10 @@ const Convo = ({ useAuth, userData, resetReload }) => {
         history.push("/home")
     }
 
+    const onEmit = () => {
+        socket.emit("new message", { otherSocketId: otherConnected.socketId })
+    }
+
     return (
         <div>
             <h4>Message: {newMessage}</h4>
@@ -206,8 +215,9 @@ const Convo = ({ useAuth, userData, resetReload }) => {
                 variant="contained"
                 color="primary"
                 onClick={() => onBack()}>Back</Button>
-            <Button onClick={() => socket.emit("new message", otherConnected.socketId)}>Emit Message</Button>
+            <Button onClick={() => onEmit()}>Emit Message</Button>
             <h4>OtherSocketId: {otherConnected.socketId}</h4>
+            {/* <Button onClick={() => console.log(otherConnected.current)}>Print otherConnected</Button> */}
         </div>
     )
 }

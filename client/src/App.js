@@ -25,7 +25,7 @@ function App() {
   const [posts, setPosts] = useState([])
   const [userData, setUserData] = useState([])
   const [loading, setLoading] = useState(false)
-
+  const [otherConnected, setOtherConnected] = useState({ connected: false, socketId: "" })
 
   // gets tweets from given data
   const getTweets = (givenData) => {
@@ -48,6 +48,10 @@ function App() {
     })
 
     return tweets
+  }
+
+  const changeOtherConnected = (data) => {
+    setOtherConnected(data)
   }
 
   // resets state data
@@ -106,7 +110,7 @@ function App() {
               <Home posts={posts} useAuth={useAuth} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
             <PrivateRoute path="/conversations" useAuth={useAuth}>
-              <Conversations userData={userData} useAuth={useAuth} resetReload={resetReload} />
+              <Conversations userData={userData} useAuth={useAuth} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected}/>
             </PrivateRoute>
             <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
               <Admin userData={userData} resetReload={resetReload} />

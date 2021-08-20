@@ -3,7 +3,7 @@ import { useHistory, Switch, Route, useRouteMatch } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Convo from './Convo'
 
-const Conversations = ({ userData, useAuth, resetReload }) => {
+const Conversations = ({ userData, useAuth, resetReload, otherConnected, changeOtherConnected }) => {
     let history = useHistory()
     const [myMessages, setMyMessages] = useState([])
     const [otherMessages, setOtherMessages] = useState([])
@@ -37,7 +37,7 @@ const Conversations = ({ userData, useAuth, resetReload }) => {
                 </div>
             </Route>
             <Route path={`${path}/:otherUserId`}>
-                <Convo useAuth={useAuth} userData={userData} resetReload={resetReload} />
+                <Convo useAuth={useAuth} userData={userData} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected}/>
             </Route>
         </Switch>
     )

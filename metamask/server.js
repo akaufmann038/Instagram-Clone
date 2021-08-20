@@ -240,16 +240,23 @@ io.on("connection", (socket) => {
     // emit connected user data to clients
     io.emit("users", users)
 
-    socket.on("new message", (data) => {
-        console.log("server received message!")
-        //socket.broadcast.emit("new message")
-        socket.to(data.otherSocketId).emit("new message")
+    socket.on("get users", (data) => {
+        console.log("sent by: " + data.userId)
+        // send back to sending client
+        socket.emit("users", users)
+    })
 
-        // NOTE: left off here. socket.to.emit is not working
+    socket.on("new message", (data) => {
+
+        //for (let item of socket.rooms) console.log("room: " + item)
+
+        //console.log(data.otherSocketId)
+        socket.to(data.otherSocketId).emit("new message", users)
     })
 
     socket.on("disconnect", () => {
         console.log("server disconnected!")
+        // send something on disconnect to change state of client
     })
 })
 
