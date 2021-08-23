@@ -19,6 +19,7 @@ import ProvideAuth from "./components/Auth/ProvideAuth"
 import PrivateRoute from "./components/Auth/PrivateRoute"
 import PrivateAdminRoute from "./components/Auth/PrivateAdminRoute"
 import Conversations from "./components/Conversations"
+import Feed from "./components/Feed"
 
 
 function App() {
@@ -32,13 +33,15 @@ function App() {
     let tweets = []
 
     givenData.forEach(user => {
-      let userId = user._id
+      let authorFullName = user.firstName + " " + user.lastName
+      let authorId = user._id
 
       tweets = tweets.concat(user.tweets.map(tweet => {
         return {
           content: tweet.content,
           _id: tweet._id,
-          author: userId,
+          authorFullName: authorFullName,
+          authorId: authorId,
           createdAt: new Date(tweet.createdAt)
         }
       }))
@@ -56,11 +59,11 @@ function App() {
 
   // resets state data
   const resetReload = (newData) => {
-      const tweets = getTweets(newData);
+    const tweets = getTweets(newData);
 
-      setUserData(newData)
-      setPosts(tweets)
-      setLoading(false)
+    setUserData(newData)
+    setPosts(tweets)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -96,6 +99,7 @@ function App() {
 
   return (
     <div>
+
       <ProvideAuth authContext={authContext}>
         <Router>
           <Switch>
@@ -109,8 +113,11 @@ function App() {
             <PrivateRoute path="/home" useAuth={useAuth}>
               <Home posts={posts} useAuth={useAuth} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
+            <PrivateRoute path="/feed" useAuth={useAuth}>
+              <Feed posts={posts} useAuth={useAuth} resetReload={resetReload} />
+            </PrivateRoute>
             <PrivateRoute path="/conversations" useAuth={useAuth}>
-              <Conversations userData={userData} useAuth={useAuth} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected}/>
+              <Conversations userData={userData} useAuth={useAuth} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
             </PrivateRoute>
             <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
               <Admin userData={userData} resetReload={resetReload} />

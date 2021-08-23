@@ -1,6 +1,8 @@
 import { useParams, useHistory } from "react-router-dom"
 import { useState } from 'react'
 import { Card, CardHeader, CardActions, Button, Container, TextField } from '@material-ui/core';
+import mastheadPicture from "../assets/img/bg-masthead.jpg"
+import demoImage from "../assets/img/demo-image-01.jpg"
 
 const PostPage = ({ posts, useAuth, resetReload }) => {
     let { postId } = useParams()
@@ -86,49 +88,120 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
     }
 
     return (
-        <div>
-            {loading ? <h3>Loading...</h3> : <></>}
-            {editMode ?
-                <Container>
-                    <h4>New Content: {newContent}</h4>
-                    <form onSubmit={(e) => onSubmit(e)}>
-                        <TextField
-                            id="outlined-multiline"
-                            label="Content"
-                            rows={6}
-                            multiline
-                            variant="outlined"
-                            required
-                            onChange={e => setNewContent(e.target.value)}
-                            placeholder={currentPost.content} />
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary">Confirm Edit</Button>
-                    </form>
-                    <Button
-                        onClick={() => setEditMode(false)}
-                        color="primary"
-                        variant="contained">Cancel</Button>
-                </Container>
-                :
-                <Card>
-                    <CardHeader title={`Content: ${currentPost.content}`} />
-                    <CardHeader title={`ID: ${currentPost._id}`} />
-                    <CardHeader title={`Author: ${currentPost.author}`} />
-                    <CardActions>
-                        {(auth.user === currentPost.author) && <Button color="secondary" variant="contained"
-                            onClick={() => deleteAction()}
-                        >Delete</Button>}
-                        <Button color="primary" variant="contained"
-                            onClick={() => setEditMode(true)}>Edit</Button>
+        <>
+            <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+                <div className="container px-4 px-lg-5">
+                    <a className="navbar-brand" href="#page-top">Creative Share</a>
+                    <button className="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                        Menu
+                    <i className="fas fa-bars"></i>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarResponsive">
+                        <ul className="navbar-nav ms-auto">
+                            <li className="nav-item"><a className="nav-link" onClick={() => history.push("/home")}>Home</a></li>
+                            <li className="nav-item"><a className="nav-link" onClick={() => history.push("/feed")}>Feed</a></li>
+                            <li className="nav-item"><a className="nav-link" href="#signup">My Posts</a></li>
+                            <li className="nav-item"><a className="nav-link" href="#signup">Conversations</a></li>
+                            <li className="nav-item"><a className="nav-link" href="#signup">LOGOUT</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <section class="projects-section bg-light" id="projects">
+                <div class="container px-4 px-lg-5">
+                    <h4>By: {currentPost.authorFullName}</h4>
 
-                        <Button color="primary" variant="contained"
-                            onClick={() => history.push("/home")}>Back</Button>
-                    </CardActions>
-                </Card>}
+                    <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
+                        <div class="col-lg-6">
+                            <img className="img-fluid" src={demoImage} alt="..." />
+                        </div>
+                        {editMode ?
+                            <>
+                                <div class="col-lg-6">
+                                    <div class="bg-black text-center h-100 project">
+                                        <div class="d-flex h-100">
+                                            <div class="project-text w-100 my-auto text-center text-lg-left">
+                                                <form name="edit-form" onSubmit={(e) => onSubmit(e)}>
+                                                    <textarea 
+                                                    class="form-control" 
+                                                    defaultValue={currentPost.content}
+                                                    onChange={e => setNewContent(e.target.value)}/>
+                                                    <button className="btn text-white " type="submit"  >CONFIRM EDIT</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a className="btn" onClick={() => setEditMode(false)}>CANCEL</a>
+                                {/* This^ needs to specify submit for the above form */}
+                            </>
+                            :
+                            <>
+                                <div class="col-lg-6">
+                                    <div class="bg-black text-center h-100 project">
+                                        <div class="d-flex h-100">
+                                            <div class="project-text w-100 my-auto text-center text-lg-left">
+                                                <h5 class="text-white">
+                                                    {currentPost.content}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a className="btn" onClick={() => setEditMode(true)}>EDIT</a>
+                            </>
+                        }
 
-        </div>
+                    </div>
+
+                </div>
+            </section>
+        </>
+
+
+        // <div>
+        //     {loading ? <h3>Loading...</h3> : <></>}
+        //     {editMode ?
+        //         <Container>
+        //             <h4>New Content: {newContent}</h4>
+        //             <form onSubmit={(e) => onSubmit(e)}>
+        //                 <TextField
+        //                     id="outlined-multiline"
+        //                     label="Content"
+        //                     rows={6}
+        //                     multiline
+        //                     variant="outlined"
+        //                     required
+        //                     onChange={e => setNewContent(e.target.value)}
+        //                     placeholder={currentPost.content} />
+        //                 <Button
+        //                     type="submit"
+        //                     variant="contained"
+        //                     color="primary">Confirm Edit</Button>
+        //             </form>
+        //             <Button
+        //                 onClick={() => setEditMode(false)}
+        //                 color="primary"
+        //                 variant="contained">Cancel</Button>
+        //         </Container>
+        //         :
+        //         <Card>
+        //             <CardHeader title={`Content: ${currentPost.content}`} />
+        //             <CardHeader title={`ID: ${currentPost._id}`} />
+        //             <CardHeader title={`Author: ${currentPost.author}`} />
+        //             <CardActions>
+        //                 {(auth.user === currentPost.author) && <Button color="secondary" variant="contained"
+        //                     onClick={() => deleteAction()}
+        //                 >Delete</Button>}
+        //                 <Button color="primary" variant="contained"
+        //                     onClick={() => setEditMode(true)}>Edit</Button>
+
+        //                 <Button color="primary" variant="contained"
+        //                     onClick={() => history.push("/home")}>Back</Button>
+        //             </CardActions>
+        //         </Card>}
+
+        // </div>
     )
 }
 
