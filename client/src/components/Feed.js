@@ -5,6 +5,7 @@ import { Button } from '@material-ui/core';
 
 const Feed = ({ posts, useAuth, resetReload, loading }) => {
     let history = useHistory()
+    let auth = useAuth()
 
     let { path, url } = useRouteMatch()
 

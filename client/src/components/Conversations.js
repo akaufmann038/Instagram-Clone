@@ -17,7 +17,18 @@ const Conversations = ({ userData, useAuth, resetReload, otherConnected, changeO
         return user._id === auth.user
     }).conversations
 
-    // left off here. was about to finish conversations page
+    const getFullName = (otherUserId) => {
+        const otherUser = userData.find(user => {
+            return user._id === otherUserId
+        })
+
+        let fullName = `${otherUser.firstName} ${otherUser.lastName}`
+
+        return fullName
+    }
+
+    console.log(myConversations)
+    
     return (
         <Switch>
             <Route exact path={path}>
@@ -44,14 +55,19 @@ const Conversations = ({ userData, useAuth, resetReload, otherConnected, changeO
                 <section class="contact-section bg-black">
                     <div class="container px-4 px-lg-5">
                         <div class="row gx-4 gx-lg-5 pb-3">
+                            {myConversations.length === 0 ? 
+                            <div class="col-md-4 mb-3 mb-md-0 mt-4">
+                                <h3 class="text-white">You have no conversations</h3> 
+                            </div>
+                            : <></>}
                             {myConversations.map((element, key) => {
                                 return (
                                     <div class="col-md-4 mb-3 mb-md-0 mt-4" key={key}>
                                         <div class="card py-4 h-100" style={{ background: "#f0f0f0" }}>
                                             <div class="card-body text-center" >
-                                                <Link class="btn bg-white" to={`/conversations/${element.userId}`}>Enter Conversation</Link>
+                                                <h3>{getFullName(element.userId)}</h3>
                                                 <hr class="my-4 mx-auto" />
-                                                <div class="small text-black-50">4923 Market Street, Orlando FL</div>
+                                                <Link class="btn bg-white" to={`/conversations/${element.userId}`}>Enter Conversation</Link>
                                             </div>
                                         </div>
                                     </div>
