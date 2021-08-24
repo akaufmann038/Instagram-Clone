@@ -59,11 +59,12 @@ function App() {
 
   // resets state data
   const resetReload = (newData) => {
+    console.log("resetReloading")
     const tweets = getTweets(newData);
 
     setUserData(newData)
     setPosts(tweets)
-    setLoading(false)
+    //setLoading(false)
   }
 
   useEffect(() => {
@@ -118,6 +119,9 @@ function App() {
             </PrivateRoute>
             <PrivateRoute path="/conversations" useAuth={useAuth}>
               <Conversations userData={userData} useAuth={useAuth} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
+            </PrivateRoute>
+            <PrivateRoute path="/my-posts" useAuth={useAuth}>
+              Hello from My posts!
             </PrivateRoute>
             <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
               <Admin userData={userData} resetReload={resetReload} />

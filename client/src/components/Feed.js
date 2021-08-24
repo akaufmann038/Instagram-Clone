@@ -1,4 +1,4 @@
-import { Switch, useRouteMatch, Route, useParams, useHistory } from "react-router-dom"
+import { Switch, useRouteMatch, Route, useParams, useHistory, Link } from "react-router-dom"
 import Posts from "./Posts"
 import PostPage from "./PostPage"
 import { Button } from '@material-ui/core';
@@ -18,7 +18,6 @@ const Feed = ({ posts, useAuth, resetReload, loading }) => {
                 return data
             })
 
-        console.log("data reloaded")
         resetReload(result)
     }
 
@@ -34,11 +33,13 @@ const Feed = ({ posts, useAuth, resetReload, loading }) => {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarResponsive">
                             <ul className="navbar-nav ms-auto">
-                                <li className="nav-item"><a className="nav-link" onClick={() => history.push("/home")}>Home</a></li>
-                                <li className="nav-item"><a className="nav-link" onClick={() => history.push("/feed")}>Feed</a></li>
-                                <li className="nav-item"><a className="nav-link" href="#signup">My Posts</a></li>
-                                <li className="nav-item"><a className="nav-link" href="#signup">Conversations</a></li>
-                                <li className="nav-item"><a className="nav-link" href="#signup">LOGOUT</a></li>
+                                <li className="nav-item"><Link className="nav-link" to="/home">Home</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/feed">Feed</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/my-posts">My Posts</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/conversations">Conversations</Link></li>
+                                <li className="nav-item"><a className="nav-link" onClick={() => {
+                                    auth.signout(() => history.push("/"));
+                                }}>LOGOUT</a></li>
                             </ul>
                         </div>
                     </div>
@@ -49,7 +50,8 @@ const Feed = ({ posts, useAuth, resetReload, loading }) => {
                         <Posts
                             posts={posts} // all post data
                             useAuth={useAuth}
-                            resetReload={resetReload} />
+                            resetReload={resetReload}
+                            refetchData={refetchData} />
                         <Button variant="contained" color="primary" onClick={() => history.push("/admin")} >Admin Page</Button>
                         <Button variant="contained" color="primary" onClick={() => history.push("/conversations")} >Conversations Page</Button>
                         <Button variat="contained" color="primary" onClick={() => refetchData()}>Refresh</Button>

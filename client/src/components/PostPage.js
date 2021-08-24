@@ -1,4 +1,4 @@
-import { useParams, useHistory } from "react-router-dom"
+import { useParams, useHistory, Link } from "react-router-dom"
 import { useState } from 'react'
 import { Card, CardHeader, CardActions, Button, Container, TextField } from '@material-ui/core';
 import mastheadPicture from "../assets/img/bg-masthead.jpg"
@@ -58,7 +58,7 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
             })
 
         setLoading(false)
-        history.push("/home")
+        history.push("/feed")
         resetReload(result)
     }
 
@@ -98,11 +98,13 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
                     </button>
                     <div className="collapse navbar-collapse" id="navbarResponsive">
                         <ul className="navbar-nav ms-auto">
-                            <li className="nav-item"><a className="nav-link" onClick={() => history.push("/home")}>Home</a></li>
-                            <li className="nav-item"><a className="nav-link" onClick={() => history.push("/feed")}>Feed</a></li>
-                            <li className="nav-item"><a className="nav-link" href="#signup">My Posts</a></li>
-                            <li className="nav-item"><a className="nav-link" href="#signup">Conversations</a></li>
-                            <li className="nav-item"><a className="nav-link" href="#signup">LOGOUT</a></li>
+                            <li className="nav-item"><Link className="nav-link" to="/home">Home</Link></li>
+                            <li className="nav-item"><Link className="nav-link" to="/feed">Feed</Link></li>
+                            <li className="nav-item"><Link className="nav-link" to="/my-posts">My Posts</Link></li>
+                            <li className="nav-item"><Link className="nav-link" to="/conversations">Conversations</Link></li>
+                            <li className="nav-item"><a className="nav-link" onClick={() => {
+                                auth.signout(() => history.push("/"));
+                            }}>LOGOUT</a></li>
                         </ul>
                     </div>
                 </div>
@@ -122,10 +124,10 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
                                         <div class="d-flex h-100">
                                             <div class="project-text w-100 my-auto text-center text-lg-left">
                                                 <form name="edit-form" onSubmit={(e) => onSubmit(e)}>
-                                                    <textarea 
-                                                    class="form-control" 
-                                                    defaultValue={currentPost.content}
-                                                    onChange={e => setNewContent(e.target.value)}/>
+                                                    <textarea
+                                                        class="form-control"
+                                                        defaultValue={currentPost.content}
+                                                        onChange={e => setNewContent(e.target.value)} />
                                                     <button className="btn text-white " type="submit"  >CONFIRM EDIT</button>
                                                 </form>
                                             </div>
@@ -133,7 +135,6 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
                                     </div>
                                 </div>
                                 <a className="btn" onClick={() => setEditMode(false)}>CANCEL</a>
-                                {/* This^ needs to specify submit for the above form */}
                             </>
                             :
                             <>
@@ -148,7 +149,17 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
                                         </div>
                                     </div>
                                 </div>
-                                <a className="btn" onClick={() => setEditMode(true)}>EDIT</a>
+                                {auth.user === currentPost.authorId ?
+                                    <>
+                                        <a className="btn" onClick={() => setEditMode(true)}>EDIT</a>
+                                        <a className="btn btn-danger" onClick={() => deleteAction()}>DELETE</a>
+                                    </>
+                                    :
+                                    <a
+                                        className="btn btn-secondary"
+                                        onClick={() => history.push("/conversations/" + currentPost.authorId)}>
+                                        SEND MESSAGE
+                                        </a>}
                             </>
                         }
 

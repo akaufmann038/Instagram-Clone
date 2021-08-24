@@ -3,7 +3,7 @@ import Posts from "./Posts"
 import PostPage from "./PostPage"
 import { Button } from '@material-ui/core';
 import { getUsersApi, deleteUserApi, deletePostApi, addUserApi } from "./Utils/Api"
-import { Switch, useRouteMatch, Route, useParams, useHistory } from "react-router-dom"
+import { Switch, useRouteMatch, Route, useParams, useHistory, Link } from "react-router-dom"
 import ipadPicture from "../assets/img/ipad.png"
 import mongoDBPicture from "../assets/img/mongodb.jpg"
 import nodeExpressPicture from "../assets/img/nodeExpress.jpg"
@@ -14,8 +14,6 @@ const Home = ({ posts, useAuth, resetReload, loading }) => {
     let history = useHistory()
 
     let { path, url } = useRouteMatch()
-
-    
 
     return (
         <Switch>
@@ -29,11 +27,13 @@ const Home = ({ posts, useAuth, resetReload, loading }) => {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarResponsive">
                             <ul className="navbar-nav ms-auto">
-                                <li className="nav-item"><a className="nav-link" onClick={() => history.push("/home")}>Home</a></li>
-                                <li className="nav-item"><a className="nav-link" onClick={() => history.push("/feed")}>Feed</a></li>
-                                <li className="nav-item"><a className="nav-link" href="#signup">My Posts</a></li>
-                                <li className="nav-item"><a className="nav-link" href="#signup">Conversations</a></li>
-                                <li className="nav-item"><a className="nav-link" href="#signup">LOGOUT</a></li>
+                                <li className="nav-item"><Link className="nav-link" to="/home">Home</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/feed">Feed</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/my-posts">My Posts</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/conversations">Conversations</Link></li>
+                                <li className="nav-item"><a className="nav-link" onClick={() => {
+                                    auth.signout(() => history.push("/"));
+                                }}>LOGOUT</a></li>
                             </ul>
                         </div>
                     </div>
@@ -47,7 +47,7 @@ const Home = ({ posts, useAuth, resetReload, loading }) => {
                                     Share photographs with others.
                                     Navigate to Feed to see all the posts and post something creative of your own!
                                 </h2>
-                                <a className="btn btn-primary" onClick={() => history.push("/feed")}>To Feed</a>
+                                <Link className="btn btn-primary" to="/feed">To Feed</Link>
                             </div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@ const Home = ({ posts, useAuth, resetReload, loading }) => {
                     <Button variat="contained" color="primary" onClick={() => refetchData()}>Refresh</Button>
                 </div> */}
             </Route>
-        </Switch>
+        </Switch >
 
     )
 }

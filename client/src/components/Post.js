@@ -1,4 +1,5 @@
 import { Card, CardHeader, CardActions, Button, TextField } from '@material-ui/core';
+import { blue } from '@material-ui/core/colors';
 import { makeStyles } from "@material-ui/core/styles"
 import { Switch, useRouteMatch, Route, useParams, useHistory, Link } from "react-router-dom"
 import mastheadPicture from "../assets/img/bg-masthead.jpg"
@@ -47,14 +48,19 @@ const Post = ({ resetReload, useAuth, postData }) => {
             </div>
             <div className="col-xl-4 col-lg-5">
                 <div className="featured-text text-center text-lg-left">
-                    <h4>By: {postData.authorFullName}</h4>
+                    {auth.user === postData.authorId ? <h4>By: Me</h4> : <h4>By: {postData.authorFullName}</h4>}
                     <p className="text-black-50 mb-0">
                         {postData.content}
                     </p>
                     <hr class="my-4 mx-auto" />
-                    <a className="btn btn-success" onClick={() => history.push("/conversations/" + postData.authorId)}>SEND MESSAGE</a>
-                    <hr class="my-4 mx-auto" />
-                    <a className="btn btn-success" onClick={() => history.push("/feed/" + postData._id)}>VIEW</a>
+                    {auth.user === postData.authorId ?
+                        <></>
+                        :
+                        <>
+                            <a className="btn btn-success" onClick={() => history.push("/conversations/" + postData.authorId)}>SEND MESSAGE</a>
+                            <hr class="my-4 mx-auto" />
+                        </>}
+                    <Link className="btn btn-success" to={`/feed/${postData._id}`}>VIEW</Link>
                 </div>
             </div>
         </>
