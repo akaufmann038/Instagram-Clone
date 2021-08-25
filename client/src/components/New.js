@@ -6,23 +6,27 @@ const New = ({ useAuth, resetReload }) => {
     let history = useHistory()
     let auth = useAuth()
 
-    const [post, setPost] = useState({
-        content: ""
+    const [postData, setPostData] = useState({
+        content: "",
+        userId: auth.user
     })
+    const [image, setImage] = useState()
     const [loading, setLoading] = useState(false)
 
     const onSubmit = async (e) => {
         e.preventDefault()
-
+        
+        // consolidate all data into FormData object
+        let allData = new FormData()
+        allData.append("content", postData.content)
+        allData.append("userId", postData.userId)
+        allData.append("image", image.image)
 
         setLoading(true)
 
-        const result = await fetch("http://localhost:5000/new-post", {
+        const result = await fetch("http://localhost:5000/test-post", {
             method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userId: auth.user, post: post })
+            body: allData
         })
             .then(response => response.json())
             .then(data => {
@@ -32,6 +36,25 @@ const New = ({ useAuth, resetReload }) => {
 
         history.push("/feed")
         resetReload(result)
+    }
+
+    const onOtherSubmit = async (e) => {
+        e.preventDefault()
+
+        let toSendData = new FormData()
+        toSendData.append("name", "Alex")
+        toSendData.append("image", image.image)
+
+        const result = await fetch("http://localhost:5000/test-post", {
+            method: "POST",
+            body: toSendData
+        })
+            .then(response => response.json())
+            .then(data => {
+                return data
+            })
+
+        console.log(result)
     }
 
     return (
@@ -59,11 +82,24 @@ const New = ({ useAuth, resetReload }) => {
             <section class="projects-section bg-light" id="projects">
                 <div className="container px-4 px-lg-5">
                     <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-                        <form id="new-post" onSubmit={(e) => onSubmit(e)}>
-                            <input class="form-control mb-2" type="file" id="formFile"
-                            onChange={e => console.log(e.target.value)}
-                            required/>
-                            <textarea class="form-control mb-2" onChange={e => setPost({ content: e.target.value })} required/>
+                        <form id="new-post" onSubmit={(e) => onSubmit(e)} >
+                            <input class="form-control mb-2" type="file" id="formFile" name="image"
+                                // change for image input
+                                onChange={e => {
+                                    // let currImage = new FormData()
+                                    // currImage.append("image", e.target.files[0])
+
+                                    setImage({ image: e.target.files[0] })
+                                }}
+                                required />
+                            <textarea class="form-control mb-2"
+                                // change for text input
+                                onChange={e => {
+                                    setPostData({
+                                        content: e.target.value,
+                                        userId: postData.userId
+                                    })
+                                }} required />
                         </form>
                         <button form="new-post" type="submit" class="btn btn-secondary">POST</button>
                         <button onClick={() => history.push("/feed")} class="btn btn-danger">CANCEL</button>

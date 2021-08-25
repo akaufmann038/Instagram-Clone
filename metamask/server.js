@@ -2,6 +2,8 @@ const express = require("express")
 const socket = require("socket.io")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
+const multer = require("multer")
+const upload = multer({ dest: "uploads/" })
 
 const app = express()
 const cors = require("cors")
@@ -22,6 +24,17 @@ mongoose.connect("mongodb://127.0.0.1:27017/socialMediaApp", {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true
+})
+
+// TODELETE
+app.post("/new-post-v2", upload.single("image"), async (req, res) => {
+    const userId = req.body.userId
+    const fileName = req.file.filename
+
+    const newPost = {
+        
+    }
+    console.log(req.file)
 })
 
 app.get("/posts", async (req, res) => {
