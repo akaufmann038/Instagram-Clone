@@ -2,6 +2,7 @@ import { useParams, useHistory, Link } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react'
 import { TextField, Button } from '@material-ui/core'
 import { socket } from '../service/socket'
+import MessagesContainer from './MessagesContainer'
 
 // LEFT OFF IN HERE
 // see what happens when there are two chats happening between four live users
@@ -70,10 +71,28 @@ const Convo = ({ useAuth, userData, resetReload, otherConnected, changeOtherConn
     if (convoExists) {
         clientMessages = clientUser.conversations.find(conversation => {
             return conversation.userId === otherUserId
-        }).messages
+        }).messages.map(element => {
+            let firstName = "Me"
+            return {
+                messageContent: element.messageContent,
+                messageCreatedAt: element.messageCreatedAt,
+                messageAuthorFirstName: firstName,
+                _id: element._id
+            }
+        })
         otherMessages = otherUser.conversations.find(conversation => {
             return conversation.userId === auth.user
-        }).messages
+        }).messages.map(element => {
+            let firstName = userData.find(user => {
+                return user._id === otherUserId
+            }).firstName
+            return {
+                messageContent: element.messageContent,
+                messageCreatedAt: element.messageCreatedAt,
+                messageAuthorFirstName: firstName,
+                _id: element._id
+            }
+        })
     }
 
     // orders messages
@@ -173,7 +192,6 @@ const Convo = ({ useAuth, userData, resetReload, otherConnected, changeOtherConn
                 return data
             })
 
-        console.log(result)
 
         if (otherConnected.connected) {
             socket.emit("new message", { otherSocketId: otherConnected.socketId })
@@ -189,6 +207,7 @@ const Convo = ({ useAuth, userData, resetReload, otherConnected, changeOtherConn
     const onEmit = () => {
         socket.emit("new message", { otherSocketId: otherConnected.socketId })
     }
+
 
     return (
         <>
@@ -213,18 +232,14 @@ const Convo = ({ useAuth, userData, resetReload, otherConnected, changeOtherConn
                 </div>
             </nav>
             <section className="projects-section bg-light">
-                <div className="container" style={{ paddingLeft: "20%", paddingRight: "20%" }}>
-                    <div style={{ height: "85%", overflow: "auto" }}>
-                        <h5 style={{ textAlign: "left" }}>Me: Hello</h5>
-                        <h5 style={{ textAlign: "right" }}>Izzy: Hello</h5>
-                        <h5 style={{ textAlign: "left" }}>Me: Hello</h5>
-                        <h5 style={{ textAlign: "left" }}>Me: Hello</h5>
-                    </div>
-
-                    <div class="input-group" style={{ marginTop: "60%" }}>
-                        <input type="text" class="form-control" placeholder="Message" />
-                        <button class="btn btn-outline-secondary" type="button" id="button-addon2">SEND</button>
-                    </div>
+                <div className="container" style={{ paddingLeft: "30%", paddingRight: "30%" }}>
+                    <MessagesContainer allMessages={allMessages}/>
+                    <form onSubmit={newConversation ? (e) => startConversation(e) : (e) => sendMessage(e)}>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Message" onChange={e => setNewMessage(e.target.value)} />
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">SEND</button>
+                        </div>
+                    </form>
                 </div>
             </section>
         </>

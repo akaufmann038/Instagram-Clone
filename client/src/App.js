@@ -20,6 +20,7 @@ import PrivateRoute from "./components/Auth/PrivateRoute"
 import PrivateAdminRoute from "./components/Auth/PrivateAdminRoute"
 import Conversations from "./components/Conversations"
 import Feed from "./components/Feed"
+import MyPosts from "./components/MyPosts"
 
 
 function App() {
@@ -121,7 +122,7 @@ function App() {
               <Conversations userData={userData} useAuth={useAuth} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
             </PrivateRoute>
             <PrivateRoute path="/my-posts" useAuth={useAuth}>
-              Hello from My posts!
+              <MyPosts posts={posts} useAuth={useAuth}/>
             </PrivateRoute>
             <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
               <Admin userData={userData} resetReload={resetReload} />

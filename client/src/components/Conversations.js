@@ -27,7 +27,6 @@ const Conversations = ({ userData, useAuth, resetReload, otherConnected, changeO
         return fullName
     }
 
-    console.log(myConversations)
     
     return (
         <Switch>
