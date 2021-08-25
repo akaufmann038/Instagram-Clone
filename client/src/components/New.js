@@ -60,8 +60,10 @@ const New = ({ useAuth, resetReload }) => {
                 <div className="container px-4 px-lg-5">
                     <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
                         <form id="new-post" onSubmit={(e) => onSubmit(e)}>
-                            <input class="form-control mb-2" type="file" id="formFile" />
-                            <textarea class="form-control mb-2" onChange={e => setPost({ content: e.target.value })} />
+                            <input class="form-control mb-2" type="file" id="formFile"
+                            onChange={e => console.log(e.target.value)}
+                            required/>
+                            <textarea class="form-control mb-2" onChange={e => setPost({ content: e.target.value })} required/>
                         </form>
                         <button form="new-post" type="submit" class="btn btn-secondary">POST</button>
                         <button onClick={() => history.push("/feed")} class="btn btn-danger">CANCEL</button>

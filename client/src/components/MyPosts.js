@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 const MyPosts = ({ posts, useAuth }) => {
     let auth = useAuth()
 
-    console.log(posts)
     const myPosts = posts.filter(post => {
         return post.authorId === auth.user
     })
