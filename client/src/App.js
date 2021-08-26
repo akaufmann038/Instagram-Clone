@@ -43,7 +43,9 @@ function App() {
           _id: tweet._id,
           authorFullName: authorFullName,
           authorId: authorId,
-          createdAt: new Date(tweet.createdAt)
+          createdAt: new Date(tweet.createdAt),
+          imageData: tweet.imageData,
+          contentType: tweet.contentType
         }
       }))
     })

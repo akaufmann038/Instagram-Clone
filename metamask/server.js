@@ -4,6 +4,8 @@ const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const multer = require("multer")
 const upload = multer({ dest: "uploads/" })
+const fs = require("fs")
+const path = require("path")
 
 const app = express()
 const cors = require("cors")
@@ -29,12 +31,29 @@ mongoose.connect("mongodb://127.0.0.1:27017/socialMediaApp", {
 // TODELETE
 app.post("/new-post-v2", upload.single("image"), async (req, res) => {
     const userId = req.body.userId
+    const content = req.body.content
     const fileName = req.file.filename
+    const contentType = req.file.mimetype
+
+    // read the actual file 
+    const imageData = fs.readFileSync(path.join(__dirname + "/uploads/" + fileName))
 
     const newPost = {
-        
+        content: content,
+        createdAt: Date.now(),
+        imageData: imageData,
+        contentType: contentType
     }
-    console.log(req.file)
+    
+    req.user = await User.findById(userId)
+
+    req.user.tweets = [...req.user.tweets, newPost]
+
+    await req.user.save() 
+
+    const posts = await User.find().sort({ createdAt: "desc" }) 
+
+    res.json(posts)
 })
 
 app.get("/posts", async (req, res) => {

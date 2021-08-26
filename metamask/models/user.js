@@ -24,6 +24,8 @@ const model = new mongoose.Schema(
                 {
                     content: String,
                     createdAt: Date,
+                    imageData: Buffer,
+                    contentType: String,
                     id: mongoose.Types.ObjectId
                 }
             ],

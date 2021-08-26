@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardActions, Button, TextField } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import { makeStyles } from "@material-ui/core/styles"
+import { useEffect, useState } from 'react';
 import { Switch, useRouteMatch, Route, useParams, useHistory, Link } from "react-router-dom"
 import mastheadPicture from "../assets/img/bg-masthead.jpg"
 
@@ -37,6 +38,15 @@ const Post = ({ resetReload, useAuth, postData }) => {
         resetReload(result)
     }
 
+    const getImage = () => {
+        const imageData = new Buffer.from(postData.imageData).toString("base64")
+
+        const imageType = postData.contentType
+
+        const imageString = "data:" + imageType + ";base64," + imageData
+
+        return imageString
+    }
 
 
     const styles = useStyles()
@@ -44,7 +54,8 @@ const Post = ({ resetReload, useAuth, postData }) => {
     return (
         <>
             <div className="col-xl-8 col-lg-7">
-                <img className="img-fluid mb-3 mb-lg-0" src={mastheadPicture} alt="..." />
+                {/* <img className="img-fluid mb-3 mb-lg-0" src={mastheadPicture} alt="..." /> */}
+                <img className="img-fluid mb-3 mb-lg-0" src={getImage()} />
             </div>
             <div className="col-xl-4 col-lg-5">
                 <div className="featured-text text-center text-lg-left">

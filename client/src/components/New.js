@@ -24,7 +24,7 @@ const New = ({ useAuth, resetReload }) => {
 
         setLoading(true)
 
-        const result = await fetch("http://localhost:5000/test-post", {
+        const result = await fetch("http://localhost:5000/new-post-v2", {
             method: "POST",
             body: allData
         })
