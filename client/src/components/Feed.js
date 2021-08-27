@@ -3,7 +3,7 @@ import Posts from "./Posts"
 import PostPage from "./PostPage"
 import { Button } from '@material-ui/core';
 
-const Feed = ({ posts, useAuth, resetReload, loading }) => {
+const Feed = ({ posts, useAuth, resetReload, loading, changeTestState }) => {
     let history = useHistory()
     let auth = useAuth()
 
@@ -60,7 +60,7 @@ const Feed = ({ posts, useAuth, resetReload, loading }) => {
                 </section>
             </Route>
             <Route path={`${path}/:postId`}>
-                <PostPage posts={posts} useAuth={useAuth} resetReload={resetReload} />
+                <PostPage posts={posts} useAuth={useAuth} resetReload={resetReload} changeTestState={changeTestState}/>
             </Route>
         </Switch>
     )

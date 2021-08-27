@@ -28,7 +28,6 @@ mongoose.connect("mongodb://127.0.0.1:27017/socialMediaApp", {
     useCreateIndex: true
 })
 
-// TODELETE
 app.post("/new-post-v2", upload.single("image"), async (req, res) => {
     const userId = req.body.userId
     const content = req.body.content
@@ -44,14 +43,14 @@ app.post("/new-post-v2", upload.single("image"), async (req, res) => {
         imageData: imageData,
         contentType: contentType
     }
-    
+
     req.user = await User.findById(userId)
 
     req.user.tweets = [...req.user.tweets, newPost]
 
-    await req.user.save() 
+    await req.user.save()
 
-    const posts = await User.find().sort({ createdAt: "desc" }) 
+    const posts = await User.find().sort({ createdAt: "desc" })
 
     res.json(posts)
 })
@@ -62,8 +61,8 @@ app.get("/posts", async (req, res) => {
     res.json(posts)
 })
 
+// TODO: don't need anymore
 app.post("/new-post", async (req, res) => {
-    // TODO: generate a post id 
     const userId = req.body.userId
     const newPost = {
         content: req.body.post.content,
@@ -87,7 +86,6 @@ app.post("/new-post", async (req, res) => {
 })
 
 app.put("/edit-post", async (req, res) => {
-    // LEFT OFF HERE
     req.user = await User.findById(req.body.userId)
 
     req.user.tweets = req.user.tweets.map(post => {
@@ -95,7 +93,9 @@ app.put("/edit-post", async (req, res) => {
             return {
                 content: req.body.post.content,
                 createdAt: post.createdAt,
-                _id: post._id
+                _id: post._id,
+                contentType: post.contentType,
+                imageData: post.imageData
             }
         } else {
             return post
@@ -183,11 +183,11 @@ app.post("/new-user", async (req, res) => {
     req.user = new User()
     req.user.firstName = req.body.firstname
     req.user.lastName = req.body.lastname,
-    req.user.username = req.body.username,
-    req.user.password = req.body.password,
-    req.user.tweets = [],
-    req.user.conversations = [],
-    req.user.admin = false
+        req.user.username = req.body.username,
+        req.user.password = req.body.password,
+        req.user.tweets = [],
+        req.user.conversations = [],
+        req.user.admin = false
 
     await req.user.save()
 
@@ -262,7 +262,7 @@ io.on("connection", (socket) => {
 
     let users = []
     for (let [id, socket] of io.of("/").sockets) {
-        users.push({ 
+        users.push({
             userId: id,
             username: socket.username
         })

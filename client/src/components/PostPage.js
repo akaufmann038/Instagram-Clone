@@ -1,10 +1,10 @@
 import { useParams, useHistory, Link } from "react-router-dom"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardHeader, CardActions, Button, Container, TextField } from '@material-ui/core';
 import mastheadPicture from "../assets/img/bg-masthead.jpg"
 import demoImage from "../assets/img/demo-image-01.jpg"
 
-const PostPage = ({ posts, useAuth, resetReload }) => {
+const PostPage = ({ posts, useAuth, resetReload, changeTestState }) => {
     let { postId } = useParams()
     let auth = useAuth()
     let history = useHistory()
@@ -12,10 +12,28 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
     const [loading, setLoading] = useState(false)
     const [editMode, setEditMode] = useState(false)
     const [newContent, setNewContent] = useState()
+    const [imageSrc, setImageSrc] = useState(null)
 
     const currentPost = posts.find(post => {
         return (post._id === postId)
     })
+
+    console.log("post page rerender")
+
+    useEffect(() => {
+        console.log("use effect firing")
+    }, [])
+
+    // useEffect(() => {
+    //     console.log("calling")
+    //     const imageData = new Buffer.from(currentPost.imageData).toString("base64")
+
+    //     const imageType = currentPost.contentType
+
+    //     const imageString = "data:" + imageType + ";base64," + imageData
+
+    //     setImageSrc(imageString)
+    // }, [])
 
     const onSubmit = async (e) => {
         e.preventDefault()
@@ -115,7 +133,7 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
 
                     <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
                         <div class="col-lg-6">
-                            <img className="img-fluid" src={demoImage} alt="..." />
+                            <img className="img-fluid" src={imageSrc} alt="..." />
                         </div>
                         {editMode ?
                             <>
@@ -164,7 +182,7 @@ const PostPage = ({ posts, useAuth, resetReload }) => {
                         }
 
                     </div>
-
+                    <button onClick={() => changeTestState()}>Change test state</button>
                 </div>
             </section>
         </>

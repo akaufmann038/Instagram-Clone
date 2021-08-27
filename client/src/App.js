@@ -21,13 +21,24 @@ import PrivateAdminRoute from "./components/Auth/PrivateAdminRoute"
 import Conversations from "./components/Conversations"
 import Feed from "./components/Feed"
 import MyPosts from "./components/MyPosts"
+import TestComponent from "./components/TestComponent"
 
 
 function App() {
-  const [posts, setPosts] = useState([])
-  const [userData, setUserData] = useState([])
+  //const [posts, setPosts] = useState([])
+  //const [userData, setUserData] = useState([])
+  const [appData, setAppData] = useState({
+    posts: null,
+    userData: null
+  })
   const [loading, setLoading] = useState(false)
   const [otherConnected, setOtherConnected] = useState({ connected: false, socketId: "" })
+
+  const [testState, setTestState] = useState(false)
+
+  const changeTestState = () => {
+    setTestState(!testState)
+  }
 
   // gets tweets from given data
   const getTweets = (givenData) => {
@@ -65,12 +76,17 @@ function App() {
     console.log("resetReloading")
     const tweets = getTweets(newData);
 
-    setUserData(newData)
-    setPosts(tweets)
+    //setUserData(newData)
+    //setPosts(tweets)
+    setAppData({
+      posts: tweets,
+      userData: newData
+    })
     //setLoading(false)
   }
 
   useEffect(() => {
+    console.log("initial useeffect")
     const fetchData = async () => {
       setLoading(true)
 
@@ -83,8 +99,12 @@ function App() {
       console.log(result)
       const tweets = getTweets(result);
 
-      setUserData(result)
-      setPosts(tweets)
+      //setUserData(result)
+      //setPosts(tweets)
+      setAppData({
+        posts: tweets,
+        userData: result
+      })
       setLoading(false)
     }
 
@@ -114,21 +134,27 @@ function App() {
             <Route path="/login">
               <Login useAuth={useAuth} />
             </Route>
+            <Route path="/test-route">
+              <TestComponent changeTestState={changeTestState} testState={testState}/>
+            </Route>
             <PrivateRoute path="/home" useAuth={useAuth}>
-              <Home posts={posts} useAuth={useAuth} resetReload={resetReload} loading={loading} />
+              <Home posts={appData.posts} useAuth={useAuth} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
             <PrivateRoute path="/feed" useAuth={useAuth}>
-              <Feed posts={posts} useAuth={useAuth} resetReload={resetReload} />
+              <Feed posts={appData.posts} useAuth={useAuth} resetReload={resetReload} changeTestState={changeTestState}/>
             </PrivateRoute>
             <PrivateRoute path="/conversations" useAuth={useAuth}>
-              <Conversations userData={userData} useAuth={useAuth} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
+              <Conversations userData={appData.userData} useAuth={useAuth} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
             </PrivateRoute>
             <PrivateRoute path="/my-posts" useAuth={useAuth}>
-              <MyPosts posts={posts} useAuth={useAuth}/>
+              <MyPosts posts={appData.posts} useAuth={useAuth} />
             </PrivateRoute>
-            <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={userData}>
-              <Admin userData={userData} resetReload={resetReload} />
+            <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={appData.userData}>
+              <Admin userData={appData.userData} resetReload={resetReload} />
             </PrivateAdminRoute>
+            {/* <PrivateRoute path="/test-route" useAuth={useAuth}>
+              <TestComponent changeTestState={changeTestState} testState={testState}/>
+            </PrivateRoute> */}
             <PrivateRoute path="/" useAuth={useAuth}>
               <Redirect to="/home" />
             </PrivateRoute>
