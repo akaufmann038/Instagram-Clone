@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { TextField, Button } from '@material-ui/core';
 import { useHistory, Link } from "react-router-dom"
+import UserContext from "./Auth/UserContext"
 
-const New = ({ useAuth, resetReload }) => {
+const New = ({ resetReload }) => {
     let history = useHistory()
-    let auth = useAuth()
+    let auth = useContext(UserContext)
 
     const [postData, setPostData] = useState({
         content: "",

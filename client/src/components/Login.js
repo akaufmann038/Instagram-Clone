@@ -1,14 +1,15 @@
 import { Button, TextField } from '@material-ui/core';
 import { useHistory, useLocation, Link } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
+import UserContext from './Auth/UserContext'
 
-const Login = ({ useAuth }) => {
+const Login = ({ }) => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [firstLogin, setFirstLogin] = useState(true)
 
     let history = useHistory()
-    let auth = useAuth()
+    const auth = useContext(UserContext)
 
     //let { from } = location.state || { from: { pathname: "/home" } };
     let { from } = { from: { pathname: "/home" } };
@@ -66,7 +67,7 @@ const Login = ({ useAuth }) => {
             </form>
             <h3>Username: {username}</h3>
             <h3>Password: {password}</h3>
-            <Link to="test-route">Test Route</Link>
+            <h5>Don't have an account? Register {<Link to="register">Here</Link>}</h5>
         </div>
     )
 }

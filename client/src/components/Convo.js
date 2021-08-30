@@ -1,19 +1,17 @@
 import { useParams, useHistory, Link } from 'react-router-dom'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useContext } from 'react'
 import { TextField, Button } from '@material-ui/core'
 import { socket } from '../service/socket'
 import MessagesContainer from './MessagesContainer'
+import UserContext from "./Auth/UserContext"
 
-// LEFT OFF IN HERE
-// see what happens when there are two chats happening between four live users
-// is there web socket interferance between them?
-const Convo = ({ useAuth, userData, resetReload, otherConnected, changeOtherConnected }) => {
+const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData }) => {
     const [newMessage, setNewMessage] = useState()
     const [newConversation, setNewConversation] = useState(true)
     //const [otherConnected, setOtherConnected] = useState({ connected: false, socketId: "" })
     //const otherConnected = useRef({ connected: false, socketId: "" })
 
-    let auth = useAuth()
+    let auth = useContext(UserContext)
     let history = useHistory()
     let { otherUserId } = useParams()
 
@@ -191,7 +189,7 @@ const Convo = ({ useAuth, userData, resetReload, otherConnected, changeOtherConn
             .then(data => {
                 return data
             })
-
+        console.log(result)
 
         if (otherConnected.connected) {
             socket.emit("new message", { otherSocketId: otherConnected.socketId })

@@ -1,16 +1,17 @@
 import { Button } from '@material-ui/core'
 import { useHistory, Switch, Route, useRouteMatch, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Convo from './Convo'
+import UserContext from "./Auth/UserContext"
 
-const Conversations = ({ userData, useAuth, resetReload, otherConnected, changeOtherConnected }) => {
+const Conversations = ({ userData, resetReload, otherConnected, changeOtherConnected }) => {
     let history = useHistory()
     const [myMessages, setMyMessages] = useState([])
     const [otherMessages, setOtherMessages] = useState([])
     const [messages, setMessages] = useState([])
 
     let { path, url } = useRouteMatch()
-    let auth = useAuth()
+    let auth = useContext(UserContext)
 
     // get conversations for current user
     const myConversations = userData.find(user => {
@@ -91,7 +92,7 @@ const Conversations = ({ userData, useAuth, resetReload, otherConnected, changeO
                 </div> */}
             </Route>
             <Route path={`${path}/:otherUserId`}>
-                <Convo useAuth={useAuth} userData={userData} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
+                <Convo userData={userData} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
             </Route>
         </Switch>
     )

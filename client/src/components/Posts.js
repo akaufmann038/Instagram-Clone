@@ -4,9 +4,8 @@ import { Button, Container } from '@material-ui/core';
 import { useHistory, Link } from "react-router-dom"
 
 
-const Posts = ({ posts, useAuth, resetReload, refetchData }) => {
+const Posts = ({ posts, resetReload, refetchData }) => {
     let history = useHistory()
-    let auth = useAuth()
 
     return (
         <div class="row gx-0 mb-4 mb-lg-5 align-items-center" style={{ background: "#d4e3fa" }}>
@@ -15,8 +14,7 @@ const Posts = ({ posts, useAuth, resetReload, refetchData }) => {
             {posts.map((element, idx) => {
                 return <Post key={idx}
                     postData={element}
-                    resetReload={resetReload}
-                    useAuth={useAuth} />
+                    resetReload={resetReload} />
             })}
         </div>
         // <div>

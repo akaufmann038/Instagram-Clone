@@ -1,9 +1,10 @@
 import { Card, CardHeader, CardActions, Button, TextField } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import { makeStyles } from "@material-ui/core/styles"
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Switch, useRouteMatch, Route, useParams, useHistory, Link } from "react-router-dom"
 import mastheadPicture from "../assets/img/bg-masthead.jpg"
+import UserContext from "./Auth/UserContext"
 
 const useStyles = makeStyles({
     userCard: {
@@ -16,9 +17,9 @@ const useStyles = makeStyles({
     }
 })
 
-const Post = ({ resetReload, useAuth, postData }) => {
+const Post = ({ resetReload, postData }) => {
 
-    let auth = useAuth()
+    let auth = useContext(UserContext)
     let history = useHistory()
     let { path, url } = useRouteMatch()
 

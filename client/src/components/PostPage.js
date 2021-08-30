@@ -1,12 +1,13 @@
 import { useParams, useHistory, Link } from "react-router-dom"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Card, CardHeader, CardActions, Button, Container, TextField } from '@material-ui/core';
 import mastheadPicture from "../assets/img/bg-masthead.jpg"
 import demoImage from "../assets/img/demo-image-01.jpg"
+import UserContext from "./Auth/UserContext"
 
-const PostPage = ({ posts, useAuth, resetReload, changeTestState }) => {
+const PostPage = ({ posts, resetReload }) => {
     let { postId } = useParams()
-    let auth = useAuth()
+    let auth = useContext(UserContext)
     let history = useHistory()
 
     const [loading, setLoading] = useState(false)
@@ -18,22 +19,16 @@ const PostPage = ({ posts, useAuth, resetReload, changeTestState }) => {
         return (post._id === postId)
     })
 
-    console.log("post page rerender")
-
     useEffect(() => {
-        console.log("use effect firing")
+        console.log("calling")
+        const imageData = new Buffer.from(currentPost.imageData).toString("base64")
+
+        const imageType = currentPost.contentType
+
+        const imageString = "data:" + imageType + ";base64," + imageData
+
+        setImageSrc(imageString)
     }, [])
-
-    // useEffect(() => {
-    //     console.log("calling")
-    //     const imageData = new Buffer.from(currentPost.imageData).toString("base64")
-
-    //     const imageType = currentPost.contentType
-
-    //     const imageString = "data:" + imageType + ";base64," + imageData
-
-    //     setImageSrc(imageString)
-    // }, [])
 
     const onSubmit = async (e) => {
         e.preventDefault()
@@ -56,8 +51,8 @@ const PostPage = ({ posts, useAuth, resetReload, changeTestState }) => {
             .then(data => {
                 return data
             })
-        console.log(result)
         setLoading(false)
+        setEditMode(false)
         resetReload(result)
     }
 
@@ -182,7 +177,6 @@ const PostPage = ({ posts, useAuth, resetReload, changeTestState }) => {
                         }
 
                     </div>
-                    <button onClick={() => changeTestState()}>Change test state</button>
                 </div>
             </section>
         </>

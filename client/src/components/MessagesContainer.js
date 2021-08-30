@@ -3,18 +3,18 @@ import React from 'react'
 class MessagesContainer extends React.Component {
     constructor(props) {
         super(props)
-        this.allMessages = props.allMessages
         this.myRef = React.createRef()
     }
 
-    componentDidMount() {
+    componentDidUpdate() {
         this.myRef.current.scrollTop = this.myRef.current.scrollHeight
     }
+
 
     render() {
         return (
             <div ref={this.myRef} style={{ height: "320px", display: "block", overflow: "auto" }}>
-                {this.allMessages.map(message => {
+                {this.props.allMessages.map(message => {
                     if (message.messageAuthorFirstName === "Me") {
                         return <h5
                             style={{ textAlign: "right" }}

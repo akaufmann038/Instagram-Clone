@@ -10,18 +10,18 @@ import {
 import Posts from "./components/Posts"
 import New from "./components/New"
 import Login from "./components/Login"
+import Register from "./components/Register"
 import Home from "./components/Home"
 import Admin from "./components/Admin"
 import { useState, useEffect, createContext, useContext } from "react"
 import { Button } from '@material-ui/core';
 import { getUsersApi, deleteUserApi, deletePostApi, addUserApi } from "./components/Utils/Api"
-import ProvideAuth from "./components/Auth/ProvideAuth"
-import PrivateRoute from "./components/Auth/PrivateRoute"
 import PrivateAdminRoute from "./components/Auth/PrivateAdminRoute"
 import Conversations from "./components/Conversations"
 import Feed from "./components/Feed"
 import MyPosts from "./components/MyPosts"
 import TestComponent from "./components/TestComponent"
+import UserContext from "./components/Auth/UserContext"
 
 
 function App() {
@@ -33,12 +33,6 @@ function App() {
   })
   const [loading, setLoading] = useState(false)
   const [otherConnected, setOtherConnected] = useState({ connected: false, socketId: "" })
-
-  const [testState, setTestState] = useState(false)
-
-  const changeTestState = () => {
-    setTestState(!testState)
-  }
 
   // gets tweets from given data
   const getTweets = (givenData) => {
@@ -112,55 +106,43 @@ function App() {
 
   }, [])
 
-
-
-  const authContext = createContext()
-
-  function useAuth() {
-    return useContext(authContext);
-  }
-
-
   return (
     <div>
 
-      <ProvideAuth authContext={authContext}>
+      <UserContext.Provider value={useProvideAuth()}>
         <Router>
           <Switch>
-            <PrivateRoute path="/new-post" useAuth={useAuth}>
-              <New useAuth={useAuth} resetReload={resetReload} />
+            <PrivateRoute path="/new-post">
+              <New resetReload={resetReload} />
             </PrivateRoute>
 
             <Route path="/login">
-              <Login useAuth={useAuth} />
+              <Login />
             </Route>
-            <Route path="/test-route">
-              <TestComponent changeTestState={changeTestState} testState={testState}/>
+            <Route path="/register">
+              <Register />
             </Route>
-            <PrivateRoute path="/home" useAuth={useAuth}>
-              <Home posts={appData.posts} useAuth={useAuth} resetReload={resetReload} loading={loading} />
+            <PrivateRoute path="/home">
+              <Home posts={appData.posts} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
-            <PrivateRoute path="/feed" useAuth={useAuth}>
-              <Feed posts={appData.posts} useAuth={useAuth} resetReload={resetReload} changeTestState={changeTestState}/>
+            <PrivateRoute path="/feed">
+              <Feed posts={appData.posts} resetReload={resetReload} />
             </PrivateRoute>
-            <PrivateRoute path="/conversations" useAuth={useAuth}>
-              <Conversations userData={appData.userData} useAuth={useAuth} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
+            <PrivateRoute path="/conversations">
+              <Conversations userData={appData.userData} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
             </PrivateRoute>
-            <PrivateRoute path="/my-posts" useAuth={useAuth}>
-              <MyPosts posts={appData.posts} useAuth={useAuth} />
+            <PrivateRoute path="/my-posts">
+              <MyPosts posts={appData.posts}/>
             </PrivateRoute>
-            <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={appData.userData}>
+            {/* <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={appData.userData}>
               <Admin userData={appData.userData} resetReload={resetReload} />
-            </PrivateAdminRoute>
-            {/* <PrivateRoute path="/test-route" useAuth={useAuth}>
-              <TestComponent changeTestState={changeTestState} testState={testState}/>
-            </PrivateRoute> */}
-            <PrivateRoute path="/" useAuth={useAuth}>
+            </PrivateAdminRoute> */}
+            <PrivateRoute path="/">
               <Redirect to="/home" />
             </PrivateRoute>
           </Switch>
         </Router>
-      </ProvideAuth>
+      </UserContext.Provider >
     </div>
   );
 }
@@ -168,3 +150,36 @@ function App() {
 
 export default App;
 
+
+const useProvideAuth = () => {
+  const [user, setUser] = useState(null)
+
+  const signin = (cb, user) => {
+    console.log("signin")
+    setUser(user)
+    cb()
+  }
+
+  const signout = (cb) => {
+    setUser(null)
+    cb()
+  }
+
+  return {
+    user,
+    signin,
+    signout
+  }
+}
+
+const PrivateRoute = ({ path, children }) => {
+  const auth = useContext(UserContext)
+
+  return (
+    <Route path={path} render={({ location }) => {
+      return (
+        auth.user ? (children) : (<Redirect to={{ pathname: "/login", state: { from: location } }} />)
+      )
+    }} />
+  )
+}

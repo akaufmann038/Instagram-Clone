@@ -2,10 +2,12 @@ import { Switch, useRouteMatch, Route, useParams, useHistory, Link } from "react
 import Posts from "./Posts"
 import PostPage from "./PostPage"
 import { Button } from '@material-ui/core';
-
-const Feed = ({ posts, useAuth, resetReload, loading, changeTestState }) => {
+import UserContext from "./Auth/UserContext"
+import { useContext } from 'react'
+ 
+const Feed = ({ posts, resetReload, loading }) => {
     let history = useHistory()
-    let auth = useAuth()
+    let auth = useContext(UserContext)
 
     let { path, url } = useRouteMatch()
 
@@ -50,7 +52,6 @@ const Feed = ({ posts, useAuth, resetReload, loading, changeTestState }) => {
                         {loading && <h4>Loading...</h4>}
                         <Posts
                             posts={posts} // all post data
-                            useAuth={useAuth}
                             resetReload={resetReload}
                             refetchData={refetchData} />
                         <Button variant="contained" color="primary" onClick={() => history.push("/admin")} >Admin Page</Button>
@@ -60,7 +61,7 @@ const Feed = ({ posts, useAuth, resetReload, loading, changeTestState }) => {
                 </section>
             </Route>
             <Route path={`${path}/:postId`}>
-                <PostPage posts={posts} useAuth={useAuth} resetReload={resetReload} changeTestState={changeTestState}/>
+                <PostPage posts={posts} resetReload={resetReload}/>
             </Route>
         </Switch>
     )

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import Posts from "./Posts"
 import PostPage from "./PostPage"
 import { Button } from '@material-ui/core';
@@ -8,9 +8,10 @@ import ipadPicture from "../assets/img/ipad.png"
 import mongoDBPicture from "../assets/img/mongodb.jpg"
 import nodeExpressPicture from "../assets/img/nodeExpress.jpg"
 import reactJSPicture from "../assets/img/reactJS.png"
+import UserContext from "./Auth/UserContext"
 
-const Home = ({ posts, useAuth, resetReload, loading }) => {
-    let auth = useAuth()
+const Home = ({ posts, resetReload, loading }) => {
+    let auth = useContext(UserContext)
     let history = useHistory()
 
     let { path, url } = useRouteMatch()
