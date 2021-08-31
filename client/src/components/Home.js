@@ -1,4 +1,4 @@
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import Posts from "./Posts"
 import PostPage from "./PostPage"
 import { Button } from '@material-ui/core';
@@ -15,6 +15,11 @@ const Home = ({ posts, resetReload, loading }) => {
     let history = useHistory()
 
     let { path, url } = useRouteMatch()
+
+    useEffect(() => {
+        console.log("home effect firing")
+        // fetch data here so that no api requests happen before user authentication
+    }, [])
 
     return (
         <Switch>

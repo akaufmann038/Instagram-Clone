@@ -1,6 +1,7 @@
 const express = require("express")
 const socket = require("socket.io")
 const bodyParser = require("body-parser")
+const cookieParser = require('cookie-parser');
 const mongoose = require("mongoose")
 const multer = require("multer")
 const upload = multer({ dest: "uploads/" })
@@ -10,6 +11,17 @@ const path = require("path")
 const app = express()
 const cors = require("cors")
 const User = require("./models/user")
+const crypto = require("crypto")
+
+// stores authentication tokens
+const authTokens = {}
+
+// connect to database
+mongoose.connect("mongodb://127.0.0.1:27017/socialMediaApp", {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true
+})
 
 app.use(
     cors({
@@ -21,12 +33,29 @@ app.use(express.urlencoded({
     extended: true
 }))
 app.use(express.json())
+app.use(cookieParser());
 
-mongoose.connect("mongodb://127.0.0.1:27017/socialMediaApp", {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true
+
+const getHashedPassword = (password) => {
+    const sha256 = crypto.createHash('sha256');
+    const hash = sha256.update(password).digest('base64');
+    return hash;
+}
+
+const generateAuthToken = () => {
+    return crypto.randomBytes(30).toString('hex');
+}
+
+app.use((req, res, next) => {
+    // get authToken from cookies
+    const authToken = req.cookies['AuthToken'];
+    console.log(`AuthToken: ${authToken}`)
+    // store user associated with authToken in req.user
+    req.user = authTokens[authToken]
+    next()
 })
+
+
 
 app.post("/new-post-v2", upload.single("image"), async (req, res) => {
     const userId = req.body.userId
@@ -180,14 +209,16 @@ app.put("/send-message", async (req, res) => {
 })
 
 app.post("/new-user", async (req, res) => {
+    const hashedPassword = getHashedPassword(req.body.password)
+
     req.user = new User()
     req.user.firstName = req.body.firstname
     req.user.lastName = req.body.lastname,
         req.user.username = req.body.username,
-        req.user.password = req.body.password,
+        req.user.password = hashedPassword,
         req.user.tweets = [],
         req.user.conversations = [],
-        req.user.admin = false
+        req.user.admin = true
 
     await req.user.save()
 
@@ -231,10 +262,17 @@ app.post("/attempt-login", async (req, res) => {
     let logUsername = req.body.username
     let logPassword = req.body.password
 
-    req.desiredUser = await User.find({ username: logUsername, password: logPassword })
+    const hashedPassword = getHashedPassword(logPassword)
+
+    // TODO: change this to check using hashedPassword
+    req.desiredUser = await User.find({ username: logUsername, password: hashedPassword })
 
     // user found
     if (req.desiredUser.length === 1) {
+        // on login, generate auth token and save it in authTokens
+        const authToken = generateAuthToken()
+        authTokens[authToken] = req.desiredUser[0].username
+
         res.json({ "message": "User found!", "user": req.desiredUser[0] })
     }
     else {

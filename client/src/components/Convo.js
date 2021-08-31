@@ -139,6 +139,7 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData }) 
         socket.on("users", usersHandler)
 
         return () => {
+            console.log("client triggered")
             socket.off("new message", newMessageHandler)
             socket.off("users", usersHandler)
         }
@@ -240,6 +241,7 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData }) 
                     </form>
                 </div>
             </section>
+            {/* <button onClick={() => onBack()}>Go Back</button> */}
         </>
         // <div>
         //     <h4>Message: {newMessage}</h4>

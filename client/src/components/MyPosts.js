@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useContext } from 'react'
 import UserContext from "./Auth/UserContext"
 
 const MyPosts = ({ posts }) => {
     let auth = useContext(UserContext)
+    let history = useHistory()
 
     const myPosts = posts.filter(post => {
         return post.authorId === auth.user

@@ -23,6 +23,8 @@ import MyPosts from "./components/MyPosts"
 import TestComponent from "./components/TestComponent"
 import UserContext from "./components/Auth/UserContext"
 
+// on register, hash password and store hashed version in database
+// on login, hash login and compare it to password in the database
 
 function App() {
   //const [posts, setPosts] = useState([])
@@ -79,32 +81,32 @@ function App() {
     //setLoading(false)
   }
 
-  useEffect(() => {
-    console.log("initial useeffect")
-    const fetchData = async () => {
-      setLoading(true)
+  // useEffect(() => {
+  //   console.log("initial useeffect")
+  //   const fetchData = async () => {
+  //     setLoading(true)
 
-      const result = await fetch("http://localhost:5000/posts")
-        .then(response => response.json())
-        .then(data => {
-          return data
-        })
+  //     const result = await fetch("http://localhost:5000/posts")
+  //       .then(response => response.json())
+  //       .then(data => {
+  //         return data
+  //       })
 
-      console.log(result)
-      const tweets = getTweets(result);
+  //     console.log(result)
+  //     const tweets = getTweets(result);
 
-      //setUserData(result)
-      //setPosts(tweets)
-      setAppData({
-        posts: tweets,
-        userData: result
-      })
-      setLoading(false)
-    }
+  //     //setUserData(result)
+  //     //setPosts(tweets)
+  //     setAppData({
+  //       posts: tweets,
+  //       userData: result
+  //     })
+  //     setLoading(false)
+  //   }
 
-    fetchData()
+  //   fetchData()
 
-  }, [])
+  // }, [])
 
   return (
     <div>
@@ -120,7 +122,7 @@ function App() {
               <Login />
             </Route>
             <Route path="/register">
-              <Register />
+              <Register resetReload={resetReload} />
             </Route>
             <PrivateRoute path="/home">
               <Home posts={appData.posts} resetReload={resetReload} loading={loading} />

@@ -2,7 +2,7 @@ import { TextField } from "@material-ui/core"
 import { useState } from "react"
 import { Link, useHistory } from 'react-router-dom'
 
-const Register = ({ }) => {
+const Register = ({ resetReload }) => {
     let history = useHistory()
 
     const [newUser, setNewUser] = useState({
