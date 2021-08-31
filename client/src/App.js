@@ -120,7 +120,7 @@ function App() {
         <Router>
           <Switch>
             <PrivateRoute path="/new-post">
-              <New resetReload={resetReload} />
+              <New resetReload={resetReload} authToken={authToken}/>
             </PrivateRoute>
 
             <Route path="/login">
@@ -133,17 +133,14 @@ function App() {
               <Home authToken={authToken} posts={appData.posts} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
             <PrivateRoute path="/feed">
-              <Feed posts={appData.posts} resetReload={resetReload} />
+              <Feed posts={appData.posts} resetReload={resetReload} authToken={authToken}/>
             </PrivateRoute>
             <PrivateRoute path="/conversations">
-              <Conversations userData={appData.userData} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
+              <Conversations authToken={authToken} userData={appData.userData} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
             </PrivateRoute>
             <PrivateRoute path="/my-posts">
               <MyPosts posts={appData.posts}/>
             </PrivateRoute>
-            {/* <PrivateAdminRoute path="/admin" useAuth={useAuth} userData={appData.userData}>
-              <Admin userData={appData.userData} resetReload={resetReload} />
-            </PrivateAdminRoute> */}
             <PrivateRoute path="/">
               <Redirect to="/home" />
             </PrivateRoute>

@@ -10,7 +10,7 @@ import nodeExpressPicture from "../assets/img/nodeExpress.jpg"
 import reactJSPicture from "../assets/img/reactJS.png"
 import UserContext from "./Auth/UserContext"
 
-const Home = ({ posts, resetReload, authToken }) => {
+const Home = ({ resetReload, authToken }) => {
     let auth = useContext(UserContext)
     let history = useHistory()
 
@@ -58,7 +58,7 @@ const Home = ({ posts, resetReload, authToken }) => {
                                 <li className="nav-item"><Link className="nav-link" to="/feed">Feed</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/my-posts">My Posts</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/conversations">Conversations</Link></li>
-                                <li className="nav-item"><a className="nav-link" onClick={() => {
+                                <li className="nav-item"><a className="nav-link" style={{ cursor: "pointer" }} onClick={() => {
                                     auth.signout(() => history.push("/"));
                                 }}>LOGOUT</a></li>
                             </ul>

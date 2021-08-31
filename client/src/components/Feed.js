@@ -4,8 +4,8 @@ import PostPage from "./PostPage"
 import { Button } from '@material-ui/core';
 import UserContext from "./Auth/UserContext"
 import { useContext } from 'react'
- 
-const Feed = ({ posts, resetReload, loading }) => {
+
+const Feed = ({ posts, resetReload, loading, authToken }) => {
     let history = useHistory()
     let auth = useContext(UserContext)
 
@@ -15,10 +15,21 @@ const Feed = ({ posts, resetReload, loading }) => {
     const refetchData = async () => {
         //setLoading(true)
 
-        const result = await fetch("http://localhost:5000/posts")
+        const result = await fetch("http://localhost:5000/posts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            // this needs to be the authToken, not the userId
+            body: JSON.stringify({ authToken: authToken, userId: auth.user })
+        })
             .then(response => response.json())
             .then(data => {
-                return data
+                if (data.message === "User authenticated") {
+                    return data.posts
+                } else {
+                    console.log("Refetch data failed")
+                }
             })
 
         resetReload(result)
@@ -40,7 +51,7 @@ const Feed = ({ posts, resetReload, loading }) => {
                                 <li className="nav-item"><Link className="nav-link" to="/feed">Feed</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/my-posts">My Posts</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/conversations">Conversations</Link></li>
-                                <li className="nav-item"><a className="nav-link" onClick={() => {
+                                <li className="nav-item"><a className="nav-link" style={{ cursor: "pointer" }} onClick={() => {
                                     auth.signout(() => history.push("/"));
                                 }}>LOGOUT</a></li>
                             </ul>
@@ -61,7 +72,7 @@ const Feed = ({ posts, resetReload, loading }) => {
                 </section>
             </Route>
             <Route path={`${path}/:postId`}>
-                <PostPage posts={posts} resetReload={resetReload}/>
+                <PostPage posts={posts} resetReload={resetReload} authToken={authToken}/>
             </Route>
         </Switch>
     )

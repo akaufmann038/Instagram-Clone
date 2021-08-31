@@ -43,6 +43,7 @@ app.use((req, res, next) => {
         req.userAuth = authTokens[authToken]
     }
 
+    console.log("done w middle")
     next()
 })
 
@@ -57,8 +58,7 @@ const generateAuthToken = () => {
     return crypto.randomBytes(30).toString('hex');
 }
 
-
-
+// creates a new post
 app.post("/new-post-v2", upload.single("image"), async (req, res) => {
     const userId = req.body.userId
     const content = req.body.content
@@ -83,11 +83,19 @@ app.post("/new-post-v2", upload.single("image"), async (req, res) => {
 
     const posts = await User.find().sort({ createdAt: "desc" })
 
-    res.json(posts)
+    // delete uploaded file
+    await fs.unlink(path.join(__dirname + "/uploads/" + fileName), (err) => {
+        if (err) {
+            console.log(err)
+            return
+        }
+    })
+
+    res.json({ message: "User authenticated", posts: posts })
 })
 
+// gets all app data
 app.post("/posts", async (req, res) => {
-    console.log("posts called")
     if (req.userAuth) {
         const posts = await User.find().sort({ createdAt: "desc" })
 
@@ -97,52 +105,38 @@ app.post("/posts", async (req, res) => {
     }
 })
 
-// TODO: don't need anymore
-app.post("/new-post", async (req, res) => {
-    const userId = req.body.userId
-    const newPost = {
-        content: req.body.post.content,
-        createdAt: Date.now()
-    }
-
-    // const newPost = {
-    //     content: req.body.post.content,
-    //     id: Math.floor(Math.random() * 100)
-    // }
-
-    req.user = await User.findById(userId)
-
-    req.user.tweets = [...req.user.tweets, newPost]
-
-    await req.user.save()
-
-    const posts = await User.find().sort({ createdAt: "desc" })
-
-    res.json(posts)
+app.get("/get-tokens", async (req, res) => {
+    res.json(authTokens)
 })
 
+// modifies a post
 app.put("/edit-post", async (req, res) => {
-    req.user = await User.findById(req.body.userId)
+    if (req.userAuth) {
+        req.user = await User.findById(req.body.userId)
 
-    req.user.tweets = req.user.tweets.map(post => {
-        if (String(post._id) === req.body.post.postId) {
-            return {
-                content: req.body.post.content,
-                createdAt: post.createdAt,
-                _id: post._id,
-                contentType: post.contentType,
-                imageData: post.imageData
+        req.user.tweets = req.user.tweets.map(post => {
+            if (String(post._id) === req.body.post.postId) {
+                return {
+                    content: req.body.post.content,
+                    createdAt: post.createdAt,
+                    _id: post._id,
+                    contentType: post.contentType,
+                    imageData: post.imageData
+                }
+            } else {
+                return post
             }
-        } else {
-            return post
-        }
-    })
+        })
 
-    await req.user.save()
+        await req.user.save()
 
-    const posts = await User.find().sort({ createdAt: "desc" })
+        const posts = await User.find().sort({ createdAt: "desc" })
 
-    res.json(posts)
+        res.json({ message: "User authenticated", posts: posts })
+    } else {
+        res.json({ message: "User not authenticated" })
+    }
+
 })
 
 app.delete("/clear-admin-conversations", async (req, res) => {
@@ -215,6 +209,7 @@ app.put("/send-message", async (req, res) => {
     res.json(posts)
 })
 
+// creates a new user
 app.post("/new-user", async (req, res) => {
     const hashedPassword = getHashedPassword(req.body.password)
 
@@ -225,7 +220,7 @@ app.post("/new-user", async (req, res) => {
         req.user.password = hashedPassword,
         req.user.tweets = [],
         req.user.conversations = [],
-        req.user.admin = true
+        req.user.admin = false
 
     await req.user.save()
 
@@ -248,21 +243,26 @@ app.delete("/delete-user", async (req, res) => {
     }
 })
 
+// deletes a post
 app.delete("/delete-post", async (req, res) => {
-    let postId = req.body.postId
-    let userId = req.body.userId
+    if (req.userAuth) {
+        let postId = req.body.postId
+        let userId = req.body.userId
 
-    req.user = await User.findById(userId)
+        req.user = await User.findById(userId)
 
-    req.user.tweets = req.user.tweets.filter(tweet => {
-        return (String(tweet._id) !== String(postId))
-    })
+        req.user.tweets = req.user.tweets.filter(tweet => {
+            return (String(tweet._id) !== String(postId))
+        })
 
-    await req.user.save()
+        await req.user.save()
 
-    const posts = await User.find().sort({ createdAt: "desc" })
+        const posts = await User.find().sort({ createdAt: "desc" })
 
-    res.json(posts)
+        res.json({ message: "User authenticated", posts: posts })
+    } else {
+        res.json({ message: "User not authenticated" })
+    }
 })
 
 app.post("/attempt-login", async (req, res) => {

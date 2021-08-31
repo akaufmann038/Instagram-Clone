@@ -5,7 +5,7 @@ import mastheadPicture from "../assets/img/bg-masthead.jpg"
 import demoImage from "../assets/img/demo-image-01.jpg"
 import UserContext from "./Auth/UserContext"
 
-const PostPage = ({ posts, resetReload }) => {
+const PostPage = ({ posts, resetReload, authToken }) => {
     let { postId } = useParams()
     let auth = useContext(UserContext)
     let history = useHistory()
@@ -41,7 +41,9 @@ const PostPage = ({ posts, resetReload }) => {
             },
             // insert new post here
             body: JSON.stringify({
-                userId: auth.user, post: {
+                userId: auth.user,
+                authToken: authToken,
+                post: {
                     postId: postId,
                     content: newContent
                 }
@@ -49,7 +51,11 @@ const PostPage = ({ posts, resetReload }) => {
         })
             .then(response => response.json())
             .then(data => {
-                return data
+                if (data.message === "User authenticated") {
+                    return data.posts
+                } else {
+                    console.log("User not authenticated")
+                }
             })
         setLoading(false)
         setEditMode(false)
@@ -63,11 +69,19 @@ const PostPage = ({ posts, resetReload }) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ userId: auth.user, postId: currentPost._id })
+            body: JSON.stringify({
+                userId: auth.user,
+                authToken: authToken,
+                postId: currentPost._id
+            })
         })
             .then(response => response.json())
             .then(data => {
-                return data
+                if (data.message === "User authenticated") {
+                    return data.posts
+                } else {
+                    console.log(data.message)
+                }
             })
 
         setLoading(false)
@@ -115,7 +129,7 @@ const PostPage = ({ posts, resetReload }) => {
                             <li className="nav-item"><Link className="nav-link" to="/feed">Feed</Link></li>
                             <li className="nav-item"><Link className="nav-link" to="/my-posts">My Posts</Link></li>
                             <li className="nav-item"><Link className="nav-link" to="/conversations">Conversations</Link></li>
-                            <li className="nav-item"><a className="nav-link" onClick={() => {
+                            <li className="nav-item"><a className="nav-link" style={{ cursor: "pointer" }} onClick={() => {
                                 auth.signout(() => history.push("/"));
                             }}>LOGOUT</a></li>
                         </ul>

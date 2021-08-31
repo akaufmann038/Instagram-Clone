@@ -4,7 +4,7 @@ import { useState, useEffect, useContext } from 'react'
 import Convo from './Convo'
 import UserContext from "./Auth/UserContext"
 
-const Conversations = ({ userData, resetReload, otherConnected, changeOtherConnected }) => {
+const Conversations = ({ userData, resetReload, otherConnected, changeOtherConnected, authToken }) => {
     let history = useHistory()
     const [myMessages, setMyMessages] = useState([])
     const [otherMessages, setOtherMessages] = useState([])
@@ -45,7 +45,7 @@ const Conversations = ({ userData, resetReload, otherConnected, changeOtherConne
                                 <li className="nav-item"><Link className="nav-link" to="/feed">Feed</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/my-posts">My Posts</Link></li>
                                 <li className="nav-item"><Link className="nav-link" to="/conversations">Conversations</Link></li>
-                                <li className="nav-item"><a className="nav-link" onClick={() => {
+                                <li className="nav-item"><a className="nav-link" style={{ cursor: "pointer" }} onClick={() => {
                                     auth.signout(() => history.push("/"));
                                 }}>LOGOUT</a></li>
                             </ul>
@@ -76,23 +76,9 @@ const Conversations = ({ userData, resetReload, otherConnected, changeOtherConne
                         </div>
                     </div>
                 </section>
-                {/* <div>
-                    <h4>Hello from Conversations Page!</h4>
-                    {myConversations.map((element, key) => {
-                        return (
-                            <section key={key}>
-                                Conversation with {element.userId}
-                                <Button 
-                                variant="contained" 
-                                onClick={() => history.push("/conversations/" + element.userId)}>Enter Conversation</Button>
-                            </section>
-                        )
-                    })}
-                    <Button variant="contained" color="primary" onClick={() => history.push("/home")}>Home</Button>
-                </div> */}
             </Route>
             <Route path={`${path}/:otherUserId`}>
-                <Convo userData={userData} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
+                <Convo authToken={authToken} userData={userData} resetReload={resetReload} otherConnected={otherConnected} changeOtherConnected={changeOtherConnected} />
             </Route>
         </Switch>
     )

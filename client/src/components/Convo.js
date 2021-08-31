@@ -5,7 +5,7 @@ import { socket } from '../service/socket'
 import MessagesContainer from './MessagesContainer'
 import UserContext from "./Auth/UserContext"
 
-const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData }) => {
+const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, authToken }) => {
     const [newMessage, setNewMessage] = useState()
     const [newConversation, setNewConversation] = useState(true)
     //const [otherConnected, setOtherConnected] = useState({ connected: false, socketId: "" })
@@ -19,10 +19,18 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData }) 
     const refetchData = async () => {
         //setLoading(true)
 
-        const result = await fetch("http://localhost:5000/posts")
+        const result = await fetch("http://localhost:5000/posts", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ authToken: authToken, userId: auth.user })
+        })
             .then(response => response.json())
             .then(data => {
-                return data
+                if (data.message === "User authenticated") {
+                    return data.posts
+                } else {
+                    console.log("Data refetch failed!")
+                }
             })
 
         console.log("data reloaded")
@@ -139,9 +147,9 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData }) 
         socket.on("users", usersHandler)
 
         return () => {
-            console.log("client triggered")
             socket.off("new message", newMessageHandler)
             socket.off("users", usersHandler)
+            socket.disconnect()
         }
     }, [])
 

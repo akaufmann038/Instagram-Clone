@@ -3,7 +3,7 @@ import { TextField, Button } from '@material-ui/core';
 import { useHistory, Link } from "react-router-dom"
 import UserContext from "./Auth/UserContext"
 
-const New = ({ resetReload }) => {
+const New = ({ resetReload, authToken }) => {
     let history = useHistory()
     let auth = useContext(UserContext)
 
@@ -16,7 +16,7 @@ const New = ({ resetReload }) => {
 
     const onSubmit = async (e) => {
         e.preventDefault()
-        
+
         // consolidate all data into FormData object
         let allData = new FormData()
         allData.append("content", postData.content)
@@ -25,13 +25,20 @@ const New = ({ resetReload }) => {
 
         setLoading(true)
 
+        // left OFF HERE!!!
+        // need to send data through form
+
         const result = await fetch("http://localhost:5000/new-post-v2", {
             method: "POST",
             body: allData
         })
             .then(response => response.json())
             .then(data => {
-                return data
+                if (data.message === "User authenticated") {
+                    return data.posts
+                } else {
+                    console.log(data.message)
+                }
             })
 
 
@@ -73,7 +80,7 @@ const New = ({ resetReload }) => {
                             <li className="nav-item"><Link className="nav-link" to="/feed">Feed</Link></li>
                             <li className="nav-item"><Link className="nav-link" to="/my-posts">My Posts</Link></li>
                             <li className="nav-item"><Link className="nav-link" to="/conversations">Conversations</Link></li>
-                            <li className="nav-item"><a className="nav-link" onClick={() => {
+                            <li className="nav-item"><a className="nav-link" style={{ cursor: "pointer" }} onClick={() => {
                                 auth.signout(() => history.push("/"));
                             }}>LOGOUT</a></li>
                         </ul>
