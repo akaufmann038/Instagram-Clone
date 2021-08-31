@@ -10,7 +10,7 @@ import nodeExpressPicture from "../assets/img/nodeExpress.jpg"
 import reactJSPicture from "../assets/img/reactJS.png"
 import UserContext from "./Auth/UserContext"
 
-const Home = ({ posts, resetReload, loading }) => {
+const Home = ({ posts, resetReload, authToken }) => {
     let auth = useContext(UserContext)
     let history = useHistory()
 
@@ -18,7 +18,28 @@ const Home = ({ posts, resetReload, loading }) => {
 
     useEffect(() => {
         console.log("home effect firing")
-        // fetch data here so that no api requests happen before user authentication
+        const fetchData = async () => {
+
+            const result = await fetch("http://localhost:5000/posts", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                // this needs to be the authToken, not the userId
+                body: JSON.stringify({ authToken: authToken, userId: auth.user })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    return data
+                })
+
+            console.log(result)
+            if (result.message === "User authenticated") {
+                resetReload(result.posts)
+            }
+        }
+
+        fetchData()
     }, [])
 
     return (

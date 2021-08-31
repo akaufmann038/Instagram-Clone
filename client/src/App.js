@@ -35,6 +35,11 @@ function App() {
   })
   const [loading, setLoading] = useState(false)
   const [otherConnected, setOtherConnected] = useState({ connected: false, socketId: "" })
+  const [authToken, setAuthToken] = useState("")
+
+  const changeAuthToken = (newToken) => {
+    setAuthToken(newToken)
+  }
 
   // gets tweets from given data
   const getTweets = (givenData) => {
@@ -119,13 +124,13 @@ function App() {
             </PrivateRoute>
 
             <Route path="/login">
-              <Login />
+              <Login changeAuthToken={changeAuthToken}/>
             </Route>
             <Route path="/register">
               <Register resetReload={resetReload} />
             </Route>
             <PrivateRoute path="/home">
-              <Home posts={appData.posts} resetReload={resetReload} loading={loading} />
+              <Home authToken={authToken} posts={appData.posts} resetReload={resetReload} loading={loading} />
             </PrivateRoute>
             <PrivateRoute path="/feed">
               <Feed posts={appData.posts} resetReload={resetReload} />

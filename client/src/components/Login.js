@@ -3,7 +3,7 @@ import { useHistory, useLocation, Link } from "react-router-dom"
 import { useState, useEffect, useContext } from "react"
 import UserContext from './Auth/UserContext'
 
-const Login = ({ }) => {
+const Login = ({ changeAuthToken }) => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [firstLogin, setFirstLogin] = useState(true)
@@ -45,7 +45,7 @@ const Login = ({ }) => {
             .then((response) => {
                 // user was found
                 if (response.message === "User found!") {
-
+                    changeAuthToken(response.AuthToken)
                     login(response.user._id)
                 }
                 else if (response.message === "User not found!") {

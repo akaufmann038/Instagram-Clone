@@ -33,27 +33,29 @@ app.use(express.urlencoded({
     extended: true
 }))
 app.use(express.json())
-app.use(cookieParser());
+
+app.use((req, res, next) => {
+    const authToken = req.body.authToken
+    const currentUser = req.body.userId
+
+    // check if sent authToken exists within authTokens
+    if (String(authTokens[authToken]) === String(currentUser)) {
+        req.userAuth = authTokens[authToken]
+    }
+
+    next()
+})
 
 
 const getHashedPassword = (password) => {
     const sha256 = crypto.createHash('sha256');
     const hash = sha256.update(password).digest('base64');
-    return hash;
+    return hash
 }
 
 const generateAuthToken = () => {
     return crypto.randomBytes(30).toString('hex');
 }
-
-app.use((req, res, next) => {
-    // get authToken from cookies
-    const authToken = req.cookies['AuthToken'];
-    console.log(`AuthToken: ${authToken}`)
-    // store user associated with authToken in req.user
-    req.user = authTokens[authToken]
-    next()
-})
 
 
 
@@ -84,10 +86,15 @@ app.post("/new-post-v2", upload.single("image"), async (req, res) => {
     res.json(posts)
 })
 
-app.get("/posts", async (req, res) => {
-    const posts = await User.find().sort({ createdAt: "desc" })
+app.post("/posts", async (req, res) => {
+    console.log("posts called")
+    if (req.userAuth) {
+        const posts = await User.find().sort({ createdAt: "desc" })
 
-    res.json(posts)
+        res.json({ message: "User authenticated", posts: posts })
+    } else {
+        res.json({ message: "User not authenticated" })
+    }
 })
 
 // TODO: don't need anymore
@@ -259,6 +266,7 @@ app.delete("/delete-post", async (req, res) => {
 })
 
 app.post("/attempt-login", async (req, res) => {
+    console.log("attempt-login")
     let logUsername = req.body.username
     let logPassword = req.body.password
 
@@ -271,9 +279,13 @@ app.post("/attempt-login", async (req, res) => {
     if (req.desiredUser.length === 1) {
         // on login, generate auth token and save it in authTokens
         const authToken = generateAuthToken()
-        authTokens[authToken] = req.desiredUser[0].username
+        authTokens[authToken] = req.desiredUser[0]._id
 
-        res.json({ "message": "User found!", "user": req.desiredUser[0] })
+        res.json({
+            "message": "User found!",
+            "user": req.desiredUser[0],
+            "AuthToken": authToken
+        })
     }
     else {
         res.json({ "message": "User not found!" })
