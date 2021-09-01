@@ -4,6 +4,10 @@ import { useState, useEffect, useContext } from 'react'
 import Convo from './Convo'
 import UserContext from "./Auth/UserContext"
 
+// as of now, there's two issues...
+// 1. conversations not loading for admin but are loading for izzy (Conversations.js)
+// 2. conversation messages are not being displayed when a conversation is entered (Convo.js)
+
 const Conversations = ({ userData, resetReload, otherConnected, changeOtherConnected, authToken }) => {
     let history = useHistory()
     const [myMessages, setMyMessages] = useState([])

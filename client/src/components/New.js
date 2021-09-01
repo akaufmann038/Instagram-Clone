@@ -22,11 +22,9 @@ const New = ({ resetReload, authToken }) => {
         allData.append("content", postData.content)
         allData.append("userId", postData.userId)
         allData.append("image", image.image)
+        allData.append("authToken", authToken)
 
         setLoading(true)
-
-        // left OFF HERE!!!
-        // need to send data through form
 
         const result = await fetch("http://localhost:5000/new-post-v2", {
             method: "POST",

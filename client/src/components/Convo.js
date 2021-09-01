@@ -70,7 +70,6 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
 
     const convoExists = getConvoExist()
 
-
     let clientMessages = []
     let otherMessages = []
     // get client and other user messages
@@ -163,14 +162,20 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                clientUserId: auth.user,
+                userId: auth.user,
+                authToken: authToken,
                 otherUserId: otherUserId,
                 firstMessage: newMessage
             })
         })
             .then(response => response.json())
             .then(data => {
-                return data
+                if (data.message === "User authenticated") {
+                    console.log(data.message)
+                    return data.posts
+                } else {
+                    console.log(data.message)
+                }
             })
 
         // no emitting necessary in start conversation because other user cannot be connected to socket
@@ -189,14 +194,20 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
                 "Content-Type": "Application/json"
             },
             body: JSON.stringify({
-                clientUserId: auth.user,
+                userId: auth.user,
+                authToken: authToken,
                 otherUserId: otherUserId,
                 message: newMessage
             })
         })
             .then(response => response.json())
             .then(data => {
-                return data
+                if (data.message === "User authenticated") {
+                    console.log(data.message)
+                    return data.posts
+                } else {
+                    console.log(data.message)
+                }
             })
         console.log(result)
 
@@ -214,7 +225,6 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
     const onEmit = () => {
         socket.emit("new message", { otherSocketId: otherConnected.socketId })
     }
-
 
     return (
         <>

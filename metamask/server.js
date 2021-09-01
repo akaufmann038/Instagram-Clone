@@ -35,6 +35,7 @@ app.use(express.urlencoded({
 app.use(express.json())
 
 app.use((req, res, next) => {
+
     const authToken = req.body.authToken
     const currentUser = req.body.userId
 
@@ -42,8 +43,6 @@ app.use((req, res, next) => {
     if (String(authTokens[authToken]) === String(currentUser)) {
         req.userAuth = authTokens[authToken]
     }
-
-    console.log("done w middle")
     next()
 })
 
@@ -62,36 +61,49 @@ const generateAuthToken = () => {
 app.post("/new-post-v2", upload.single("image"), async (req, res) => {
     const userId = req.body.userId
     const content = req.body.content
+    const authToken = req.body.authToken
     const fileName = req.file.filename
     const contentType = req.file.mimetype
 
-    // read the actual file 
-    const imageData = fs.readFileSync(path.join(__dirname + "/uploads/" + fileName))
+    let isAuthenticated;
 
-    const newPost = {
-        content: content,
-        createdAt: Date.now(),
-        imageData: imageData,
-        contentType: contentType
+    if (String(authTokens[authToken]) === String(userId)) {
+        isAuthenticated = authTokens[authToken]
     }
 
-    req.user = await User.findById(userId)
+    if (isAuthenticated) {
+        // read the actual file 
+        const imageData = fs.readFileSync(path.join(__dirname + "/uploads/" + fileName))
 
-    req.user.tweets = [...req.user.tweets, newPost]
-
-    await req.user.save()
-
-    const posts = await User.find().sort({ createdAt: "desc" })
-
-    // delete uploaded file
-    await fs.unlink(path.join(__dirname + "/uploads/" + fileName), (err) => {
-        if (err) {
-            console.log(err)
-            return
+        const newPost = {
+            content: content,
+            createdAt: Date.now(),
+            imageData: imageData,
+            contentType: contentType
         }
-    })
 
-    res.json({ message: "User authenticated", posts: posts })
+        req.user = await User.findById(userId)
+
+        req.user.tweets = [...req.user.tweets, newPost]
+
+        await req.user.save()
+
+        const posts = await User.find().sort({ createdAt: "desc" })
+
+        // delete uploaded file
+        await fs.unlink(path.join(__dirname + "/uploads/" + fileName), (err) => {
+            if (err) {
+                console.log(err)
+                return
+            }
+        })
+
+        res.json({ message: "User authenticated", posts: posts })
+    } else {
+        res.json({ message: "User not authenticated" })
+    }
+
+
 })
 
 // gets all app data
@@ -149,64 +161,74 @@ app.delete("/clear-admin-conversations", async (req, res) => {
     res.json("Deleted Admin's conversations!")
 })
 
+// begin a new conversation
 app.post("/new-conversation", async (req, res) => {
-    req.clientUser = await User.findById(req.body.clientUserId)
+    if (req.userAuth) {
+        req.clientUser = await User.findById(req.body.userId)
 
-    req.otherUser = await User.findById(req.body.otherUserId)
+        req.otherUser = await User.findById(req.body.otherUserId)
 
-    const firstMessage = req.body.firstMessage
+        const firstMessage = req.body.firstMessage
 
-    const conversationCreatedAt = Date.now()
+        const conversationCreatedAt = Date.now()
 
-    // create the conversation for clientUser
-    req.clientUser.conversations = [...req.clientUser.conversations, {
-        userId: req.body.otherUserId,
-        messages: [{ messageContent: firstMessage, messageCreatedAt: conversationCreatedAt }],
-        createdAt: conversationCreatedAt
-    }]
+        // create the conversation for clientUser
+        req.clientUser.conversations = [...req.clientUser.conversations, {
+            userId: req.body.otherUserId,
+            messages: [{ messageContent: firstMessage, messageCreatedAt: conversationCreatedAt }],
+            createdAt: conversationCreatedAt
+        }]
 
-    // create the conversation for otherUser
-    req.otherUser.conversations = [...req.otherUser.conversations, {
-        userId: req.body.clientUserId,
-        messages: [],
-        createdAt: conversationCreatedAt
-    }]
+        // create the conversation for otherUser
+        req.otherUser.conversations = [...req.otherUser.conversations, {
+            userId: req.body.userId,
+            messages: [],
+            createdAt: conversationCreatedAt
+        }]
 
-    await req.clientUser.save()
-    await req.otherUser.save()
+        await req.clientUser.save()
+        await req.otherUser.save()
 
-    const posts = await User.find().sort({ createdAt: "desc" })
+        const posts = await User.find().sort({ createdAt: "desc" })
 
-    res.json(posts)
+        res.json({ message: "User authenticated", posts: posts })
+    } else {
+        req.json({ message: "User not authenticated" })
+    }
 })
 
+// sends a new message in the conversation
 app.put("/send-message", async (req, res) => {
-    req.user = await User.findById(req.body.clientUserId)
+    if (req.userAuth) {
+        req.user = await User.findById(req.body.userId)
 
-    let found = false
-    req.user.conversations = req.user.conversations.map(convo => {
-        // identify current conversation
-        if (convo.userId === req.body.otherUserId && !found) {
-            found = true
-            return {
-                createdAt: convo.createdAt,
-                messages: [...convo.messages, {
-                    messageContent: req.body.message,
-                    messageCreatedAt: Date.now()
-                }],
-                userId: convo.userId,
-                _id: convo._id
+        let found = false
+        req.user.conversations = req.user.conversations.map(convo => {
+            // identify current conversation
+            if (convo.userId === req.body.otherUserId && !found) {
+                found = true
+                return {
+                    createdAt: convo.createdAt,
+                    messages: [...convo.messages, {
+                        messageContent: req.body.message,
+                        messageCreatedAt: Date.now()
+                    }],
+                    userId: convo.userId,
+                    _id: convo._id
+                }
+            } else {
+                return convo
             }
-        } else {
-            return convo
-        }
-    })
+        })
 
-    await req.user.save()
+        await req.user.save()
 
-    const posts = await User.find().sort({ createdAt: "desc" })
+        const posts = await User.find().sort({ createdAt: "desc" })
 
-    res.json(posts)
+        res.json({ message: "User authenticated", posts: posts })
+    } else {
+        res.json({ message: "User not authenticated" })
+    }
 })
 
 // creates a new user
@@ -220,7 +242,7 @@ app.post("/new-user", async (req, res) => {
         req.user.password = hashedPassword,
         req.user.tweets = [],
         req.user.conversations = [],
-        req.user.admin = false
+        req.user.admin = true
 
     await req.user.save()
 
