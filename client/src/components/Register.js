@@ -14,7 +14,7 @@ const Register = ({ resetReload }) => {
     const onSubmit = async (e) => {
         e.preventDefault()
 
-        const result = await fetch("http://localhost:5000/new-user", {
+        const result = await fetch("/new-user", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'

@@ -14,7 +14,7 @@ const Feed = ({ posts, resetReload, loading, authToken }) => {
     const refetchData = async () => {
         //setLoading(true)
 
-        const result = await fetch("http://localhost:5000/posts", {
+        const result = await fetch("/posts", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

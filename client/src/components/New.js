@@ -25,7 +25,7 @@ const New = ({ resetReload, authToken }) => {
 
         setLoading(true)
 
-        const result = await fetch("http://localhost:5000/new-post-v2", {
+        const result = await fetch("/new-post-v2", {
             method: "POST",
             body: allData
         })
@@ -106,8 +106,8 @@ const New = ({ resetReload, authToken }) => {
                                     })
                                 }} required />
                         </form>
-                        <button form="new-post" type="submit" class="btn btn-secondary">POST</button>
-                        <button onClick={() => history.push("/feed")} class="btn btn-danger">CANCEL</button>
+                        <button form="new-post" type="submit" className="btn btn-secondary">POST</button>
+                        <button onClick={() => history.push("/feed")} className="btn btn-danger">CANCEL</button>
                     </div>
                 </div>
             </section>

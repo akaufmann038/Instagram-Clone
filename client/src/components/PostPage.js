@@ -17,7 +17,6 @@ const PostPage = ({ posts, resetReload, authToken }) => {
     })
 
     useEffect(() => {
-        console.log("calling")
         const imageData = new Buffer.from(currentPost.imageData).toString("base64")
 
         const imageType = currentPost.contentType
@@ -31,7 +30,7 @@ const PostPage = ({ posts, resetReload, authToken }) => {
         e.preventDefault()
 
         setLoading(true)
-        const result = await fetch("http://localhost:5000/edit-post", {
+        const result = await fetch("/edit-post", {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json'
@@ -61,7 +60,7 @@ const PostPage = ({ posts, resetReload, authToken }) => {
 
     const deleteAction = async () => {
         setLoading(true)
-        const result = await fetch("http://localhost:5000/delete-post", {
+        const result = await fetch("/delete-post", {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json'

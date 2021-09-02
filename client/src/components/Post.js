@@ -8,7 +8,7 @@ const Post = ({ resetReload, postData }) => {
     let history = useHistory()
 
     const deleteAction = async () => {
-        const result = await fetch("http://localhost:5000/delete-post", {
+        const result = await fetch("/delete-post", {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json'

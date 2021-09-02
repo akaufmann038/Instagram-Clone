@@ -61,7 +61,6 @@ function App() {
 
   // resets state data
   const resetReload = (newData) => {
-    console.log("resetReloading")
     const tweets = getTweets(newData);
 
     //setUserData(newData)
@@ -146,7 +145,6 @@ const useProvideAuth = () => {
   const [user, setUser] = useState(null)
 
   const signin = (cb, user) => {
-    console.log("signin")
     setUser(user)
     cb()
   }

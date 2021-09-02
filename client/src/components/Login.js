@@ -28,7 +28,7 @@ const Login = ({ changeAuthToken }) => {
 
         // if not valid, prompt user to try again
 
-        fetch("http://localhost:5000/attempt-login", {
+        fetch("/attempt-login", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -66,7 +66,7 @@ const Login = ({ changeAuthToken }) => {
                 <form onSubmit={(e) => onSubmit(e)}>
                     <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
                     <div className="form-floating">
-                        <input type="username" class="form-control" id="floatingInput" placeholder="Username"
+                        <input type="username" className="form-control" id="floatingInput" placeholder="Username"
                         onChange={e => setUsername(e.target.value)} required/>
                         <label>Username</label>
                     </div>

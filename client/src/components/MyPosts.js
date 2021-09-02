@@ -33,7 +33,7 @@ const MyPosts = ({ posts }) => {
                 </div>
             </nav>
             <section className="contact-section bg-black">
-                <div clclassNameass="container px-4 px-lg-5">
+                <div className="container px-4 px-lg-5">
                     <div className="row gx-4 gx-lg-5 pb-3">
                         {myPosts.length === 0 ?
                             <div className="col-md-4 mb-3 mb-md-0 mt-4">

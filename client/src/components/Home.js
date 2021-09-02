@@ -9,10 +9,9 @@ const Home = ({ resetReload, authToken }) => {
     let { path, url } = useRouteMatch()
 
     useEffect(() => {
-        console.log("home effect firing")
         const fetchData = async () => {
 
-            const result = await fetch("http://localhost:5000/posts", {
+            const result = await fetch("/posts", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -25,7 +24,6 @@ const Home = ({ resetReload, authToken }) => {
                     return data
                 })
 
-            console.log(result)
             if (result.message === "User authenticated") {
                 resetReload(result.posts)
             }

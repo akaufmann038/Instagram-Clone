@@ -18,7 +18,7 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
     const refetchData = async () => {
         //setLoading(true)
 
-        const result = await fetch("http://localhost:5000/posts", {
+        const result = await fetch("/posts", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({ authToken: authToken, userId: auth.user })
@@ -126,7 +126,6 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
         }
 
         const usersHandler = (connectedUsers) => {
-            console.log(connectedUsers)
 
             // if other user is connected, set otherConnected state to true
             // otherwise, it stays false
@@ -155,7 +154,7 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
     const startConversation = async (e) => {
         e.preventDefault()
 
-        const result = await fetch("http://localhost:5000/new-conversation", {
+        const result = await fetch("/new-conversation", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -187,7 +186,7 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
     const sendMessage = async (e) => {
         e.preventDefault()
 
-        const result = await fetch("http://localhost:5000/send-message", {
+        const result = await fetch("/send-message", {
             method: "PUT",
             headers: {
                 "Content-Type": "Application/json"
@@ -202,13 +201,11 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
             .then(response => response.json())
             .then(data => {
                 if (data.message === "User authenticated") {
-                    console.log(data.message)
                     return data.posts
                 } else {
                     console.log(data.message)
                 }
             })
-        console.log(result)
 
         if (otherConnected.connected) {
             socket.emit("new message", { otherSocketId: otherConnected.socketId })
