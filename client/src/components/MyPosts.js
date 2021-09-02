@@ -32,21 +32,21 @@ const MyPosts = ({ posts }) => {
                     </div>
                 </div>
             </nav>
-            <section class="contact-section bg-black">
-                <div class="container px-4 px-lg-5">
-                    <div class="row gx-4 gx-lg-5 pb-3">
+            <section className="contact-section bg-black">
+                <div clclassNameass="container px-4 px-lg-5">
+                    <div className="row gx-4 gx-lg-5 pb-3">
                         {myPosts.length === 0 ?
-                            <div class="col-md-4 mb-3 mb-md-0 mt-4">
-                                <h3 class="text-white">You have no posts</h3>
+                            <div className="col-md-4 mb-3 mb-md-0 mt-4">
+                                <h3 className="text-white">You have no posts</h3>
                             </div>
                             : <></>}
                         {myPosts.map((element, key) => {
                             return (
-                                <div class="col-md-4 mb-3 mb-md-0 mt-4" key={key}>
-                                    <div class="card py-4 h-100" style={{ background: "#f0f0f0" }}>
-                                        <div class="card-body text-center" >
+                                <div className="col-md-4 mb-3 mb-md-0 mt-4" key={key}>
+                                    <div className="card py-4 h-100" style={{ background: "#f0f0f0" }}>
+                                        <div className="card-body text-center" >
                                             <h3>{element.content}</h3>
-                                            <hr class="my-4 mx-auto" />
+                                            <hr className="my-4 mx-auto" />
                                             <Link className="btn btn-success" to={`/feed/${element._id}`}>VIEW</Link>
                                         </div>
                                     </div>

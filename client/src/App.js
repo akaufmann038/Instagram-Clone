@@ -3,32 +3,19 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect,
-  useHistory,
-  useLocation
+  Redirect
 } from "react-router-dom";
-import Posts from "./components/Posts"
 import New from "./components/New"
 import Login from "./components/Login"
 import Register from "./components/Register"
 import Home from "./components/Home"
-import Admin from "./components/Admin"
-import { useState, useEffect, createContext, useContext } from "react"
-import { Button } from '@material-ui/core';
-import { getUsersApi, deleteUserApi, deletePostApi, addUserApi } from "./components/Utils/Api"
-import PrivateAdminRoute from "./components/Auth/PrivateAdminRoute"
+import { useState, useContext } from "react"
 import Conversations from "./components/Conversations"
 import Feed from "./components/Feed"
 import MyPosts from "./components/MyPosts"
-import TestComponent from "./components/TestComponent"
 import UserContext from "./components/Auth/UserContext"
 
-// on register, hash password and store hashed version in database
-// on login, hash login and compare it to password in the database
-
 function App() {
-  //const [posts, setPosts] = useState([])
-  //const [userData, setUserData] = useState([])
   const [appData, setAppData] = useState({
     posts: null,
     userData: null

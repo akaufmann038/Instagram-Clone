@@ -1,5 +1,4 @@
 import { useState, useContext } from "react"
-import { TextField, Button } from '@material-ui/core';
 import { useHistory, Link } from "react-router-dom"
 import UserContext from "./Auth/UserContext"
 
@@ -85,11 +84,11 @@ const New = ({ resetReload, authToken }) => {
                     </div>
                 </div>
             </nav>
-            <section class="projects-section bg-light" id="projects">
+            <section className="projects-section bg-light" id="projects">
                 <div className="container px-4 px-lg-5">
-                    <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
+                    <div className="row gx-0 mb-4 mb-lg-5 align-items-center">
                         <form id="new-post" onSubmit={(e) => onSubmit(e)} >
-                            <input class="form-control mb-2" type="file" id="formFile" name="image"
+                            <input className="form-control mb-2" type="file" id="formFile" name="image"
                                 // change for image input
                                 onChange={e => {
                                     // let currImage = new FormData()
@@ -98,7 +97,7 @@ const New = ({ resetReload, authToken }) => {
                                     setImage({ image: e.target.files[0] })
                                 }}
                                 required />
-                            <textarea class="form-control mb-2"
+                            <textarea className="form-control mb-2"
                                 // change for text input
                                 onChange={e => {
                                     setPostData({

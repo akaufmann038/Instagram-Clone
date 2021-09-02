@@ -1,6 +1,5 @@
-import { Button, TextField } from '@material-ui/core';
-import { useHistory, useLocation, Link } from "react-router-dom"
-import { useState, useEffect, useContext } from "react"
+import { useHistory, Link } from "react-router-dom"
+import { useState, useContext } from "react"
 import UserContext from './Auth/UserContext'
 
 const Login = ({ changeAuthToken }) => {
@@ -22,10 +21,10 @@ const Login = ({ changeAuthToken }) => {
 
     const onSubmit = (e) => {
         e.preventDefault()
-        
+
         // try login with server
         // if valid, login
-            // hit api with username and password, get back boolean
+        // hit api with username and password, get back boolean
 
         // if not valid, prompt user to try again
 
@@ -55,21 +54,34 @@ const Login = ({ changeAuthToken }) => {
     }
 
     return (
-        <div>
-            {firstLogin ? <h3>Login with Username and Password</h3> : <h3>Login Failed! Try again.</h3>}
-            <form onSubmit={(e) => onSubmit(e)}>
-                <TextField name="username" id="outlined-multiline" label="Username" variant="outlined" required onChange={e => setUsername(e.target.value)}/>
-                <TextField name="password" id="outlined-multiline" label="Password" variant="outlined" required onChange={e => setPassword(e.target.value)}/>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary">Login</Button>
-            </form>
-            <h3>Username: {username}</h3>
-            <h3>Password: {password}</h3>
-            <h5>Don't have an account? Register {<Link to="register">Here</Link>}</h5>
+        <div className="text-center" 
+        style={{ 
+            height: "100%", 
+            display: "flex", 
+            alignItems: "center", 
+            paddingTop: "40px",
+            paddingBottom: "40px"
+            }}>
+            <main style={{ width: "100%", maxWidth: "330px", padding: "15px", margin: "auto" }}>
+                <form onSubmit={(e) => onSubmit(e)}>
+                    <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
+                    <div className="form-floating">
+                        <input type="username" class="form-control" id="floatingInput" placeholder="Username"
+                        onChange={e => setUsername(e.target.value)} required/>
+                        <label>Username</label>
+                    </div>
+                    <div className="form-floating">
+                        <input type="password" className="form-control" id="floatingPassword" placeholder="Password"
+                        onChange={e => setPassword(e.target.value)} required/>
+                        <label>Password</label>
+                    </div>
+                    <button className="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+                </form>
+                <h5>Don't have an account? Register {<Link to="register">Here</Link>}</h5>
+            </main>
         </div>
     )
 }
 
 export default Login
+

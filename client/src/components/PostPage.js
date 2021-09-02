@@ -1,8 +1,5 @@
 import { useParams, useHistory, Link } from "react-router-dom"
 import { useState, useEffect, useContext } from 'react'
-import { Card, CardHeader, CardActions, Button, Container, TextField } from '@material-ui/core';
-import mastheadPicture from "../assets/img/bg-masthead.jpg"
-import demoImage from "../assets/img/demo-image-01.jpg"
 import UserContext from "./Auth/UserContext"
 
 const PostPage = ({ posts, resetReload, authToken }) => {
@@ -136,23 +133,23 @@ const PostPage = ({ posts, resetReload, authToken }) => {
                     </div>
                 </div>
             </nav>
-            <section class="projects-section bg-light" id="projects">
-                <div class="container px-4 px-lg-5">
+            <section className="projects-section bg-light" id="projects">
+                <div className="container px-4 px-lg-5">
                     <h4>By: {currentPost.authorFullName}</h4>
 
-                    <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
-                        <div class="col-lg-6">
+                    <div className="row gx-0 mb-5 mb-lg-0 justify-content-center">
+                        <div className="col-lg-6">
                             <img className="img-fluid" src={imageSrc} alt="..." />
                         </div>
                         {editMode ?
                             <>
-                                <div class="col-lg-6">
-                                    <div class="bg-black text-center h-100 project">
-                                        <div class="d-flex h-100">
-                                            <div class="project-text w-100 my-auto text-center text-lg-left">
+                                <div className="col-lg-6">
+                                    <div className="bg-black text-center h-100 project">
+                                        <div className="d-flex h-100">
+                                            <div className="project-text w-100 my-auto text-center text-lg-left">
                                                 <form name="edit-form" onSubmit={(e) => onSubmit(e)}>
                                                     <textarea
-                                                        class="form-control"
+                                                        className="form-control"
                                                         defaultValue={currentPost.content}
                                                         onChange={e => setNewContent(e.target.value)} />
                                                     <button className="btn text-white " type="submit"  >CONFIRM EDIT</button>
@@ -165,11 +162,11 @@ const PostPage = ({ posts, resetReload, authToken }) => {
                             </>
                             :
                             <>
-                                <div class="col-lg-6">
-                                    <div class="bg-black text-center h-100 project">
-                                        <div class="d-flex h-100">
-                                            <div class="project-text w-100 my-auto text-center text-lg-left">
-                                                <h5 class="text-white">
+                                <div className="col-lg-6">
+                                    <div className="bg-black text-center h-100 project">
+                                        <div className="d-flex h-100">
+                                            <div className="project-text w-100 my-auto text-center text-lg-left">
+                                                <h5 className="text-white">
                                                     {currentPost.content}
                                                 </h5>
                                             </div>
@@ -194,51 +191,6 @@ const PostPage = ({ posts, resetReload, authToken }) => {
                 </div>
             </section>
         </>
-
-
-        // <div>
-        //     {loading ? <h3>Loading...</h3> : <></>}
-        //     {editMode ?
-        //         <Container>
-        //             <h4>New Content: {newContent}</h4>
-        //             <form onSubmit={(e) => onSubmit(e)}>
-        //                 <TextField
-        //                     id="outlined-multiline"
-        //                     label="Content"
-        //                     rows={6}
-        //                     multiline
-        //                     variant="outlined"
-        //                     required
-        //                     onChange={e => setNewContent(e.target.value)}
-        //                     placeholder={currentPost.content} />
-        //                 <Button
-        //                     type="submit"
-        //                     variant="contained"
-        //                     color="primary">Confirm Edit</Button>
-        //             </form>
-        //             <Button
-        //                 onClick={() => setEditMode(false)}
-        //                 color="primary"
-        //                 variant="contained">Cancel</Button>
-        //         </Container>
-        //         :
-        //         <Card>
-        //             <CardHeader title={`Content: ${currentPost.content}`} />
-        //             <CardHeader title={`ID: ${currentPost._id}`} />
-        //             <CardHeader title={`Author: ${currentPost.author}`} />
-        //             <CardActions>
-        //                 {(auth.user === currentPost.author) && <Button color="secondary" variant="contained"
-        //                     onClick={() => deleteAction()}
-        //                 >Delete</Button>}
-        //                 <Button color="primary" variant="contained"
-        //                     onClick={() => setEditMode(true)}>Edit</Button>
-
-        //                 <Button color="primary" variant="contained"
-        //                     onClick={() => history.push("/home")}>Back</Button>
-        //             </CardActions>
-        //         </Card>}
-
-        // </div>
     )
 }
 

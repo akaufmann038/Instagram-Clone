@@ -1,6 +1,5 @@
 import { useParams, useHistory, Link } from 'react-router-dom'
 import { useEffect, useState, useRef, useContext } from 'react'
-import { TextField, Button } from '@material-ui/core'
 import { socket } from '../service/socket'
 import MessagesContainer from './MessagesContainer'
 import UserContext from "./Auth/UserContext"
@@ -252,45 +251,14 @@ const Convo = ({ resetReload, otherConnected, changeOtherConnected, userData, au
                 <div className="container" style={{ paddingLeft: "30%", paddingRight: "30%" }}>
                     <MessagesContainer allMessages={allMessages}/>
                     <form onSubmit={newConversation ? (e) => startConversation(e) : (e) => sendMessage(e)}>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Message" onChange={e => setNewMessage(e.target.value)} />
-                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">SEND</button>
+                        <div className="input-group">
+                            <input type="text" className="form-control" placeholder="Message" onChange={e => setNewMessage(e.target.value)} />
+                            <button className="btn btn-outline-secondary" type="submit" id="button-addon2">SEND</button>
                         </div>
                     </form>
                 </div>
             </section>
-            {/* <button onClick={() => onBack()}>Go Back</button> */}
         </>
-        // <div>
-        //     <h4>Message: {newMessage}</h4>
-        //     <h4>newConversation?: {String(newConversation)}</h4>
-        //     <section>
-        //         Messages:
-        //         {allMessages.map(message => {
-        //         return <h4 key={message._id}>{message.messageContent}</h4>
-        //     })}
-        //     </section>
-        //     <form onSubmit={newConversation ? (e) => startConversation(e) : (e) => sendMessage(e)}>
-        //         <TextField
-        //             id="outlined-multiline"
-        //             label="Message"
-        //             variant="outlined"
-        //             required
-        //             onChange={e => setNewMessage(e.target.value)} />
-        //         <Button
-        //             type="submit"
-        //             variant="contained"
-        //             color="primary">Send</Button>
-        //     </form>
-        //     <Button
-        //         type="submit"
-        //         variant="contained"
-        //         color="primary"
-        //         onClick={() => onBack()}>Back</Button>
-        //     <Button onClick={() => onEmit()}>Emit Message</Button>
-        //     <h4>OtherSocketId: {otherConnected.socketId}</h4>
-        //     {/* <Button onClick={() => console.log(otherConnected.current)}>Print otherConnected</Button> */}
-        // </div>
     )
 }
 

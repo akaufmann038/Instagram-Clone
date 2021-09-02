@@ -1,7 +1,6 @@
-import { Switch, useRouteMatch, Route, useParams, useHistory, Link } from "react-router-dom"
+import { Switch, useRouteMatch, Route, useHistory, Link } from "react-router-dom"
 import Posts from "./Posts"
 import PostPage from "./PostPage"
-import { Button } from '@material-ui/core';
 import UserContext from "./Auth/UserContext"
 import { useContext } from 'react'
 
@@ -65,9 +64,6 @@ const Feed = ({ posts, resetReload, loading, authToken }) => {
                             posts={posts} // all post data
                             resetReload={resetReload}
                             refetchData={refetchData} />
-                        <Button variant="contained" color="primary" onClick={() => history.push("/admin")} >Admin Page</Button>
-                        <Button variant="contained" color="primary" onClick={() => history.push("/conversations")} >Conversations Page</Button>
-                        <Button variat="contained" color="primary" onClick={() => refetchData()}>Refresh</Button>
                     </div>
                 </section>
             </Route>

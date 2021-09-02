@@ -1,18 +1,10 @@
-import { Button } from '@material-ui/core'
 import { useHistory, Switch, Route, useRouteMatch, Link } from 'react-router-dom'
-import { useState, useEffect, useContext } from 'react'
+import { useState, useContext } from 'react'
 import Convo from './Convo'
 import UserContext from "./Auth/UserContext"
 
-// as of now, there's two issues...
-// 1. conversations not loading for admin but are loading for izzy (Conversations.js)
-// 2. conversation messages are not being displayed when a conversation is entered (Convo.js)
-
 const Conversations = ({ userData, resetReload, otherConnected, changeOtherConnected, authToken }) => {
     let history = useHistory()
-    const [myMessages, setMyMessages] = useState([])
-    const [otherMessages, setOtherMessages] = useState([])
-    const [messages, setMessages] = useState([])
 
     let { path, url } = useRouteMatch()
     let auth = useContext(UserContext)
@@ -56,22 +48,22 @@ const Conversations = ({ userData, resetReload, otherConnected, changeOtherConne
                         </div>
                     </div>
                 </nav>
-                <section class="contact-section bg-black">
-                    <div class="container px-4 px-lg-5">
-                        <div class="row gx-4 gx-lg-5 pb-3">
+                <section className="contact-section bg-black">
+                    <div className="container px-4 px-lg-5">
+                        <div className="row gx-4 gx-lg-5 pb-3">
                             {myConversations.length === 0 ? 
-                            <div class="col-md-4 mb-3 mb-md-0 mt-4">
-                                <h3 class="text-white">You have no conversations</h3> 
+                            <div className="col-md-4 mb-3 mb-md-0 mt-4">
+                                <h3 className="text-white">You have no conversations</h3> 
                             </div>
                             : <></>}
                             {myConversations.map((element, key) => {
                                 return (
-                                    <div class="col-md-4 mb-3 mb-md-0 mt-4" key={key}>
-                                        <div class="card py-4 h-100" style={{ background: "#f0f0f0" }}>
-                                            <div class="card-body text-center" >
+                                    <div className="col-md-4 mb-3 mb-md-0 mt-4" key={key}>
+                                        <div className="card py-4 h-100" style={{ background: "#f0f0f0" }}>
+                                            <div className="card-body text-center" >
                                                 <h3>{getFullName(element.userId)}</h3>
-                                                <hr class="my-4 mx-auto" />
-                                                <Link class="btn bg-white" to={`/conversations/${element.userId}`}>Enter Conversation</Link>
+                                                <hr className="my-4 mx-auto" />
+                                                <Link className="btn bg-white" to={`/conversations/${element.userId}`}>Enter Conversation</Link>
                                             </div>
                                         </div>
                                     </div>
