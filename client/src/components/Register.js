@@ -73,7 +73,7 @@ const Register = ({ resetReload }) => {
                         <label>Username</label>
                     </div>
                     <div className="form-floating">
-                        <input type="password" class="form-control" placeholder="Password"
+                        <input type="password" className="form-control" placeholder="Password"
                             onChange={e => setNewUser({
                                 firstname: newUser.firstname,
                                 lastname: newUser.lastname,
