@@ -33,7 +33,7 @@ app.use(express.urlencoded({
     extended: true
 }))
 app.use(express.json())
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, '../metamask/build')));
 
 app.use((req, res, next) => {
 
@@ -316,7 +316,7 @@ app.post("/attempt-login", async (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+    res.sendFile(path.join(__dirname, './build/index.html'));
 });
 
 
