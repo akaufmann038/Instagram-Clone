@@ -17,7 +17,7 @@ const crypto = require("crypto")
 const authTokens = {}
 
 // connect to database
-mongoose.connect("mongodb://127.0.0.1:27017/socialMediaApp", {
+mongoose.connect("mongodb+srv://Admin:Admin@cluster0.9celi.mongodb.net/loveAppDataBase?retryWrites=true&w=majority", {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true
