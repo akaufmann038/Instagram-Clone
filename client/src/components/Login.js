@@ -48,6 +48,7 @@ const Login = ({ changeAuthToken }) => {
                     login(response.user._id)
                 }
                 else if (response.message === "User not found!") {
+                    alert(response.message)
                     setFirstLogin(false)
                 }
             })

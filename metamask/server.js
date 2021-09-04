@@ -23,11 +23,7 @@ const authTokens = {}
 //     useCreateIndex: true
 // })
 
-mongoose.connect("mongodb+srv://doapps-0944c5a6-05cd-4a96-9dbe-6755fd65ecbd:392YFdh675KW1C8E@db-mongodb-nyc3-09891-d8cb165b.mongo.ondigitalocean.com/admin?authSource=admin&tls=true", {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true
-})
+
 
 app.use(
     cors({
@@ -40,6 +36,16 @@ app.use(express.urlencoded({
 }))
 app.use(express.json())
 app.use(express.static(path.join(__dirname, '../metamask/build')));
+
+const certificatePath = path.join(__dirname + "/certificates/mongoCertificate.crt")
+
+console.log(certificatePath)
+
+mongoose.connect("mongodb+srv://doadmin:1L569r82T0A7IwtW@db-mongodb-nyc3-09891-d8cb165b.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=db-mongodb-nyc3-09891&tls=true&tlsCAFile=" + certificatePath, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true
+})
 
 app.use((req, res, next) => {
 
@@ -126,6 +132,18 @@ app.post("/posts", async (req, res) => {
 
 app.get("/get-tokens", async (req, res) => {
     res.json(authTokens)
+})
+
+app.get("/getdata", async (req, res) => {
+    const data = await User.find()
+
+    res.json({ data: data })
+})
+
+app.get("/deletedata", async (req, res) => {
+    await User.deleteMany({ firstName: "admin" })
+
+    res.json({ message: "Success!" })
 })
 
 // modifies a post
@@ -248,9 +266,9 @@ app.post("/new-user", async (req, res) => {
     req.user.username = req.body.username
 
     const existingUsers = await User.find({
-        firstName: "Arion",
-        lastName: "Statovci",
-        username: "WHA?WHA?"
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+        username: req.user.username
     })
 
     if (existingUsers.length === 0) {
