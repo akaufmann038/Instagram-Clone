@@ -39,6 +39,7 @@ app.use(express.urlencoded({
     extended: true
 }))
 app.use(express.json())
+app.use(express.static(path.join(__dirname, '../metamask/build')));
 
 app.use((req, res, next) => {
 
@@ -338,6 +339,10 @@ app.post("/attempt-login", async (req, res) => {
         res.json({ "message": "User not found!" })
     }
 })
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './build/index.html'));
+});
 
 
 var server = app.listen(5000)

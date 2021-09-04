@@ -16,6 +16,7 @@ import MyPosts from "./components/MyPosts"
 import UserContext from "./components/Auth/UserContext"
 
 function App() {
+  // this belongs only in production
   const [appData, setAppData] = useState({
     posts: null,
     userData: null
