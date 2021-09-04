@@ -16,8 +16,14 @@ const crypto = require("crypto")
 // stores authentication tokens
 const authTokens = {}
 
-// connect to database
-mongoose.connect("mongodb://127.0.0.1:27017/socialMediaApp", {
+// mongoose.connect("mongodb+srv://Admin:Admin@cluster0.9celi.mongodb.net/loveAppDataBase?retryWrites=true&w=majority", {
+//     useUnifiedTopology: true,
+//     useNewUrlParser: true,
+//     useCreateIndex: true
+// })
+
+
+mongoose.connect("mongodb+srv://doapps-0944c5a6-05cd-4a96-9dbe-6755fd65ecbd:392YFdh675KW1C8E@db-mongodb-nyc3-09891-d8cb165b.mongo.ondigitalocean.com/admin?authSource=admin&tls=true", {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true
@@ -231,24 +237,43 @@ app.put("/send-message", async (req, res) => {
     }
 })
 
+// app.get("/delete-arion", async (req, res) => {
+//     await User.deleteMany({ lastName: "Sadat" })
+
+//     res.json({ message: "Success!" })
+// })
+
 // creates a new user
 app.post("/new-user", async (req, res) => {
     const hashedPassword = getHashedPassword(req.body.password)
 
     req.user = new User()
     req.user.firstName = req.body.firstname
-    req.user.lastName = req.body.lastname,
-        req.user.username = req.body.username,
-        req.user.password = hashedPassword,
-        req.user.tweets = [],
-        req.user.conversations = [],
+    req.user.lastName = req.body.lastname
+    req.user.username = req.body.username
+
+    const existingUsers = await User.find({
+        firstName: "Arion",
+        lastName: "Statovci",
+        username: "WHA?WHA?"
+    })
+
+    if (existingUsers.length === 0) {
+        req.user.password = hashedPassword
+        req.user.tweets = []
+        req.user.conversations = []
         req.user.admin = true
 
-    await req.user.save()
+        await req.user.save()
 
-    const posts = await User.find().sort({ createdAt: "desc" })
+        const posts = await User.find().sort({ createdAt: "desc" })
 
-    res.json(posts)
+        res.json({ message: "Successful", posts: posts })
+    } else {
+        res.json({ message: "User already exists" })
+    }
+
+
 })
 
 app.delete("/delete-user", async (req, res) => {

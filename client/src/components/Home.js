@@ -25,6 +25,7 @@ const Home = ({ resetReload, authToken }) => {
                 })
 
             if (result.message === "User authenticated") {
+                console.log(result.posts)
                 resetReload(result.posts)
             }
         }

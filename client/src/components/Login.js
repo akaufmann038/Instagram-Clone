@@ -49,6 +49,7 @@ const Login = ({ changeAuthToken }) => {
                 }
                 else if (response.message === "User not found!") {
                     setFirstLogin(false)
+                    throw response.message
                 }
             })
     }
