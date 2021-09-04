@@ -23,7 +23,11 @@ const Register = ({ resetReload }) => {
         })
             .then(response => response.json())
             .then(data => {
-                return data
+                if (data.message === "User authenticated") {
+                    return data.posts
+                } else {
+                    throw data.message
+                }
             })
 
         history.push("/login")
