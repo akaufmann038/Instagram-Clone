@@ -41,7 +41,12 @@ const certificatePath = path.join(__dirname + "/certificates/mongoCertificate.cr
 
 console.log(certificatePath)
 
-mongoose.connect("mongodb+srv://doadmin:1L569r82T0A7IwtW@db-mongodb-nyc3-09891-d8cb165b.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=db-mongodb-nyc3-09891&tls=true&tlsCAFile=" + certificatePath, {
+// mongoose.connect("mongodb+srv://doadmin:1L569r82T0A7IwtW@db-mongodb-nyc3-09891-d8cb165b.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=db-mongodb-nyc3-09891&tls=true&tlsCAFile=" + certificatePath, {
+//     useUnifiedTopology: true,
+//     useNewUrlParser: true,
+//     useCreateIndex: true
+// })
+mongoose.connect("mongodb://localhost:27017/test", {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true
@@ -193,30 +198,44 @@ app.post("/new-conversation", async (req, res) => {
 
         req.otherUser = await User.findById(req.body.otherUserId)
 
-        const firstMessage = req.body.firstMessage
+        // verify that conversation does not already exist with other user
+        let convoExists = false
 
-        const conversationCreatedAt = Date.now()
+        req.clientUser.conversations.forEach(convo => {
+            if (convo.userId == req.body.otherUserId) {
+                convoExists = true
+            }
+        })
 
-        // create the conversation for clientUser
-        req.clientUser.conversations = [...req.clientUser.conversations, {
-            userId: req.body.otherUserId,
-            messages: [{ messageContent: firstMessage, messageCreatedAt: conversationCreatedAt }],
-            createdAt: conversationCreatedAt
-        }]
+        if (!convoExists) {
+            const firstMessage = req.body.firstMessage
 
-        // create the conversation for otherUser
-        req.otherUser.conversations = [...req.otherUser.conversations, {
-            userId: req.body.userId,
-            messages: [],
-            createdAt: conversationCreatedAt
-        }]
+            const conversationCreatedAt = Date.now()
 
-        await req.clientUser.save()
-        await req.otherUser.save()
+            // create the conversation for clientUser
+            req.clientUser.conversations = [...req.clientUser.conversations, {
+                userId: req.body.otherUserId,
+                messages: [{ messageContent: firstMessage, messageCreatedAt: conversationCreatedAt }],
+                createdAt: conversationCreatedAt
+            }]
 
-        const posts = await User.find().sort({ createdAt: "desc" })
+            // create the conversation for otherUser
+            req.otherUser.conversations = [...req.otherUser.conversations, {
+                userId: req.body.userId,
+                messages: [],
+                createdAt: conversationCreatedAt
+            }]
 
-        res.json({ message: "User authenticated", posts: posts })
+            await req.clientUser.save()
+            await req.otherUser.save()
+
+            const posts = await User.find().sort({ createdAt: "desc" })
+
+            res.json({ message: "User authenticated", posts: posts })
+        } else {
+            res.json({ message: "Conversation already exists!" })
+        }
+
     } else {
         req.json({ message: "User not authenticated" })
     }
