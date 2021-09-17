@@ -1,7 +1,8 @@
 const express = require("express")
 const socket = require("socket.io")
 const bodyParser = require("body-parser")
-const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser')
+var session = require("express-session")
 const mongoose = require("mongoose")
 const multer = require("multer")
 const upload = multer({ dest: "uploads/" })
@@ -16,13 +17,14 @@ const crypto = require("crypto")
 // stores authentication tokens
 const authTokens = {}
 
+console.log("AuthTokens: " + authTokens)
+
 // connect to database
 // mongoose.connect("mongodb+srv://Admin:Admin@cluster0.9celi.mongodb.net/loveAppDataBase?retryWrites=true&w=majority", {
 //     useUnifiedTopology: true,
 //     useNewUrlParser: true,
 //     useCreateIndex: true
 // })
-
 
 
 app.use(
@@ -36,6 +38,13 @@ app.use(express.urlencoded({
 }))
 app.use(express.json())
 app.use(express.static(path.join(__dirname, '../metamask/build')));
+
+app.use(session({
+    secret: "keyboard cat",
+    saveUninitialized: true,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+    resave: false
+}))
 
 const certificatePath = path.join(__dirname + "/certificates/mongoCertificate.crt")
 
@@ -53,14 +62,21 @@ mongoose.connect("mongodb://localhost:27017/test", {
 })
 
 app.use((req, res, next) => {
-
+    
     const authToken = req.body.authToken
     const currentUser = req.body.userId
 
-    // check if sent authToken exists within authTokens
-    if (String(authTokens[authToken]) === String(currentUser)) {
-        req.userAuth = authTokens[authToken]
+    if (req.session.authToken && req.session.authToken.token === authToken && 
+        req.session.authToken.userId === String(currentUser)) {
+        req.userAuth = true;
+    } else {
+        req.userAuth = false
     }
+
+    // check if sent authToken exists within authTokens
+    // if (String(authTokens[authToken]) === String(currentUser)) {
+    //     req.userAuth = authTokens[authToken]
+    // }
     next()
 })
 
@@ -344,6 +360,15 @@ app.delete("/delete-post", async (req, res) => {
     }
 })
 
+// for testing purposes
+app.get("/test-auth", async (req, res) => {
+    if (req.userAuth) {
+        res.json({ message: "User authenticated" })
+    } else {
+        res.json({ message: "User not authenticated" })
+    }
+})
+
 app.post("/attempt-login", async (req, res) => {
     console.log("attempt-login")
     let logUsername = req.body.username
@@ -358,7 +383,10 @@ app.post("/attempt-login", async (req, res) => {
     if (req.desiredUser.length === 1) {
         // on login, generate auth token and save it in authTokens
         const authToken = generateAuthToken()
-        authTokens[authToken] = req.desiredUser[0]._id
+        //authTokens[authToken] = req.desiredUser[0]._id
+
+        req.session.authToken = { token: authToken, userId: req.desiredUser[0]._id}
+
 
         res.json({
             "message": "User found!",
