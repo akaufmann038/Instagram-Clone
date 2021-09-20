@@ -14,22 +14,6 @@ const cors = require("cors")
 const User = require("./models/user")
 const crypto = require("crypto")
 
-// stores authentication tokens
-const authTokens = {}
-
-// mongoose.connect("mongodb+srv://Admin:Admin@cluster0.9celi.mongodb.net/loveAppDataBase?retryWrites=true&w=majority", {
-//     useUnifiedTopology: true,
-//     useNewUrlParser: true,
-//     useCreateIndex: true
-// })
-
-
-mongoose.connect("mongodb+srv://doapps-0944c5a6-05cd-4a96-9dbe-6755fd65ecbd:392YFdh675KW1C8E@db-mongodb-nyc3-09891-d8cb165b.mongo.ondigitalocean.com/admin?authSource=admin&tls=true", {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true
-})
-
 app.use(
     cors({
         origin: "http://localhost:3000"
@@ -51,13 +35,6 @@ app.use(session({
 
 const certificatePath = path.join(__dirname + "/certificates/mongoCertificate.crt")
 
-console.log(certificatePath)
-
-// mongoose.connect("mongodb+srv://doadmin:1L569r82T0A7IwtW@db-mongodb-nyc3-09891-d8cb165b.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=db-mongodb-nyc3-09891&tls=true&tlsCAFile=" + certificatePath, {
-//     useUnifiedTopology: true,
-//     useNewUrlParser: true,
-//     useCreateIndex: true
-// })
 mongoose.connect("mongodb://localhost:27017/test", {
     useUnifiedTopology: true,
     useNewUrlParser: true,
@@ -75,11 +52,7 @@ app.use((req, res, next) => {
     } else {
         req.userAuth = false
     }
-
-    // check if sent authToken exists within authTokens
-    // if (String(authTokens[authToken]) === String(currentUser)) {
-    //     req.userAuth = authTokens[authToken]
-    // }
+    
     next()
 })
 
