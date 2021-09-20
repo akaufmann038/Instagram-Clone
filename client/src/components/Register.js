@@ -24,14 +24,14 @@ const Register = ({ resetReload }) => {
             .then(response => response.json())
             .then(data => {
                 if (data.message === "Successful") {
+                    history.push("/login")
+                    resetReload(data.posts)
+                    
                     return data.posts
                 } else {
-                    throw data.message
+                    alert(data.message)
                 }
             })
-
-        history.push("/login")
-        resetReload(result)
     }
 
     return (

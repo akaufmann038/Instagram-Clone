@@ -1,7 +1,8 @@
 const express = require("express")
 const socket = require("socket.io")
 const bodyParser = require("body-parser")
-const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser')
+var session = require("express-session")
 const mongoose = require("mongoose")
 const multer = require("multer")
 const upload = multer({ dest: "uploads/" })
@@ -41,15 +42,44 @@ app.use(express.urlencoded({
 app.use(express.json())
 app.use(express.static(path.join(__dirname, '../metamask/build')));
 
-app.use((req, res, next) => {
+app.use(session({
+    secret: "keyboard cat",
+    saveUninitialized: true,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+    resave: false
+}))
 
+const certificatePath = path.join(__dirname + "/certificates/mongoCertificate.crt")
+
+console.log(certificatePath)
+
+// mongoose.connect("mongodb+srv://doadmin:1L569r82T0A7IwtW@db-mongodb-nyc3-09891-d8cb165b.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=db-mongodb-nyc3-09891&tls=true&tlsCAFile=" + certificatePath, {
+//     useUnifiedTopology: true,
+//     useNewUrlParser: true,
+//     useCreateIndex: true
+// })
+mongoose.connect("mongodb://localhost:27017/test", {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true
+})
+
+app.use((req, res, next) => {
+    
     const authToken = req.body.authToken
     const currentUser = req.body.userId
 
-    // check if sent authToken exists within authTokens
-    if (String(authTokens[authToken]) === String(currentUser)) {
-        req.userAuth = authTokens[authToken]
+    if (req.session.authToken && req.session.authToken.token === authToken && 
+        req.session.authToken.userId === String(currentUser)) {
+        req.userAuth = true;
+    } else {
+        req.userAuth = false
     }
+
+    // check if sent authToken exists within authTokens
+    // if (String(authTokens[authToken]) === String(currentUser)) {
+    //     req.userAuth = authTokens[authToken]
+    // }
     next()
 })
 
@@ -128,6 +158,18 @@ app.get("/get-tokens", async (req, res) => {
     res.json(authTokens)
 })
 
+app.get("/getdata", async (req, res) => {
+    const data = await User.find()
+
+    res.json({ data: data })
+})
+
+app.get("/deletedata", async (req, res) => {
+    await User.deleteMany({ firstName: "admin" })
+
+    res.json({ message: "Success!" })
+})
+
 // modifies a post
 app.put("/edit-post", async (req, res) => {
     if (req.userAuth) {
@@ -175,30 +217,44 @@ app.post("/new-conversation", async (req, res) => {
 
         req.otherUser = await User.findById(req.body.otherUserId)
 
-        const firstMessage = req.body.firstMessage
+        // verify that conversation does not already exist with other user
+        let convoExists = false
 
-        const conversationCreatedAt = Date.now()
+        req.clientUser.conversations.forEach(convo => {
+            if (convo.userId == req.body.otherUserId) {
+                convoExists = true
+            }
+        })
 
-        // create the conversation for clientUser
-        req.clientUser.conversations = [...req.clientUser.conversations, {
-            userId: req.body.otherUserId,
-            messages: [{ messageContent: firstMessage, messageCreatedAt: conversationCreatedAt }],
-            createdAt: conversationCreatedAt
-        }]
+        if (!convoExists) {
+            const firstMessage = req.body.firstMessage
 
-        // create the conversation for otherUser
-        req.otherUser.conversations = [...req.otherUser.conversations, {
-            userId: req.body.userId,
-            messages: [],
-            createdAt: conversationCreatedAt
-        }]
+            const conversationCreatedAt = Date.now()
 
-        await req.clientUser.save()
-        await req.otherUser.save()
+            // create the conversation for clientUser
+            req.clientUser.conversations = [...req.clientUser.conversations, {
+                userId: req.body.otherUserId,
+                messages: [{ messageContent: firstMessage, messageCreatedAt: conversationCreatedAt }],
+                createdAt: conversationCreatedAt
+            }]
 
-        const posts = await User.find().sort({ createdAt: "desc" })
+            // create the conversation for otherUser
+            req.otherUser.conversations = [...req.otherUser.conversations, {
+                userId: req.body.userId,
+                messages: [],
+                createdAt: conversationCreatedAt
+            }]
 
-        res.json({ message: "User authenticated", posts: posts })
+            await req.clientUser.save()
+            await req.otherUser.save()
+
+            const posts = await User.find().sort({ createdAt: "desc" })
+
+            res.json({ message: "User authenticated", posts: posts })
+        } else {
+            res.json({ message: "Conversation already exists!" })
+        }
+
     } else {
         req.json({ message: "User not authenticated" })
     }
@@ -254,9 +310,9 @@ app.post("/new-user", async (req, res) => {
     req.user.username = req.body.username
 
     const existingUsers = await User.find({
-        firstName: "Arion",
-        lastName: "Statovci",
-        username: "WHA?WHA?"
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+        username: req.user.username
     })
 
     if (existingUsers.length === 0) {
@@ -313,6 +369,15 @@ app.delete("/delete-post", async (req, res) => {
     }
 })
 
+// for testing purposes
+app.get("/test-auth", async (req, res) => {
+    if (req.userAuth) {
+        res.json({ message: "User authenticated" })
+    } else {
+        res.json({ message: "User not authenticated" })
+    }
+})
+
 app.post("/attempt-login", async (req, res) => {
     console.log("attempt-login")
     let logUsername = req.body.username
@@ -327,7 +392,10 @@ app.post("/attempt-login", async (req, res) => {
     if (req.desiredUser.length === 1) {
         // on login, generate auth token and save it in authTokens
         const authToken = generateAuthToken()
-        authTokens[authToken] = req.desiredUser[0]._id
+        //authTokens[authToken] = req.desiredUser[0]._id
+
+        req.session.authToken = { token: authToken, userId: req.desiredUser[0]._id}
+
 
         res.json({
             "message": "User found!",
