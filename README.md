@@ -1,4 +1,4 @@
-# love-app
+# Instagram Clone
 Instagram clone which allows authenticated users to post, view, edit, and delete pictures on a feed and direct message other users
 
 ## BackEnd
